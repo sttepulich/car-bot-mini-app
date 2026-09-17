@@ -25,7 +25,7 @@
                     <h3 id="car-name">Загрузка...</h3>
                     <p id="car-specs">-</p>
                 </div>
-                <button class="btn-icon" onclick="selectCar()">📝</button>
+                <button class="btn-icon" onclick="showScreen('edit-car-screen')">📝</button>
             </div>
         </div>
 
@@ -310,51 +310,134 @@
     <div id="map-screen" class="screen">
         <div class="header">
             <button class="btn-back" onclick="showScreen('main-screen')">← Назад</button>
-            <h2>Карта сервисов</h2>
+            <h2>🗺️ Карта сервисов</h2>
         </div>
 
-        <div class="search-bar">
-            <input type="text" placeholder="Поиск СТО, заправок..." id="map-search">
-            <button class="btn-icon">🔍</button>
+        <!-- Фильтры -->
+        <div class="map-filters">
+            <button class="filter-btn active" onclick="filterPlaces('all')" data-type="all">
+                <span>🗺️</span> Все
+            </button>
+            <button class="filter-btn" onclick="filterPlaces('gas')" data-type="gas">
+                <span>⛽</span> Заправки
+            </button>
+            <button class="filter-btn" onclick="filterPlaces('sto')" data-type="sto">
+                <span>🔧</span> СТО
+            </button>
+            <button class="filter-btn" onclick="filterPlaces('tire')" data-type="tire">
+                <span>🛞</span> Шиномонтаж
+            </button>
         </div>
 
-        <div class="map-placeholder" id="map-container">
-            <p>🗺️ Карта загружается...</p>
-            <small>Для полной функциональности нужен API ключ карт</small>
+        <!-- Карта (используем iframe для простоты) -->
+        <div class="map-container" id="map-view">
+            <button class="btn-locate" onclick="requestLocation()">
+                <span>📍</span> Моё местоположение
+            </button>
+            <div class="map-placeholder">
+                <div class="map-icon">🗺️</div>
+                <h3>Разрешите доступ к геолокации</h3>
+                <p>Чтобы показать ближайшие СТО и заправки</p>
+                <button class="btn-primary" onclick="requestLocation()">
+                    📍 Разрешить
+                </button>
+            </div>
         </div>
 
-        <div class="services-list">
-            <h3>Ближайшие сервисы:</h3>
-            
-            <div class="service-card">
-                <div class="service-icon">⛽</div>
-                <div class="service-info">
+        <!-- Список мест -->
+        <div class="places-list" id="places-list">
+            <div class="places-header">
+                <h3>Ближайшие сервисы</h3>
+                <span class="places-count" id="places-count">...</span>
+            </div>
+
+            <!-- Заправки -->
+            <div class="place-card" data-type="gas" data-distance="1.2">
+                <div class="place-badge gas">⛽</div>
+                <div class="place-content">
                     <h4>Лукойл</h4>
-                    <p>📍 1.2 км • ул. Ленина, 45</p>
-                    <p>⭐ 4.5 • AI-95: 55₽/л</p>
+                    <p class="place-address">📍 ул. Ленина, 45</p>
+                    <p class="place-info">⭐ 4.5 • AI-95: 55₽/л • AI-98: 62₽/л</p>
+                    <p class="place-distance">🚗 1.2 км • ~3 мин</p>
                 </div>
-                <button class="btn-icon">→</button>
+                <button class="btn-route" onclick="openRoute('55.751244,37.618423')">→</button>
             </div>
 
-            <div class="service-card">
-                <div class="service-icon">🔧</div>
-                <div class="service-info">
+            <div class="place-card" data-type="gas" data-distance="1.8">
+                <div class="place-badge gas">⛽</div>
+                <div class="place-content">
+                    <h4>Газпромнефть</h4>
+                    <p class="place-address">📍 пр. Мира, 120</p>
+                    <p class="place-info">⭐ 4.7 • AI-95: 54₽/л • AI-100: 70₽/л</p>
+                    <p class="place-distance">🚗 1.8 км • ~5 мин</p>
+                </div>
+                <button class="btn-route" onclick="openRoute('55.751244,37.618423')">→</button>
+            </div>
+
+            <div class="place-card" data-type="gas" data-distance="2.3">
+                <div class="place-badge gas">⛽</div>
+                <div class="place-content">
+                    <h4>Роснефть</h4>
+                    <p class="place-address">📍 Садовое кольцо, 15</p>
+                    <p class="place-info">⭐ 4.3 • AI-95: 56₽/л • Diesel: 58₽/л</p>
+                    <p class="place-distance">🚗 2.3 км • ~6 мин</p>
+                </div>
+                <button class="btn-route" onclick="openRoute('55.751244,37.618423')">→</button>
+            </div>
+
+            <!-- СТО -->
+            <div class="place-card" data-type="sto" data-distance="2.8">
+                <div class="place-badge sto">🔧</div>
+                <div class="place-content">
                     <h4>АвтоМастер</h4>
-                    <p>📍 2.8 км • пр. Победы, 12</p>
-                    <p>⭐ 4.8 • Работает до 20:00</p>
+                    <p class="place-address">📍 пр. Победы, 12</p>
+                    <p class="place-info">⭐ 4.8 • Ремонт, диагностика, ТО</p>
+                    <p class="place-time">🕐 Пн-Пт 9:00-20:00, Сб 10:00-18:00</p>
+                    <p class="place-distance">🚗 2.8 км • ~8 мин</p>
                 </div>
-                <button class="btn-icon">→</button>
+                <button class="btn-route" onclick="openRoute('55.751244,37.618423')">→</button>
             </div>
 
-            <div class="service-card">
-                <div class="service-icon">🚗</div>
-                <div class="service-info">
-                    <h4>Шиномонтаж 24/7</h4>
-                    <p>📍 3.5 км • ул. Гагарина, 78</p>
-                    <p>⭐ 4.2 • Круглосуточно</p>
+            <div class="place-card" data-type="sto" data-distance="3.2">
+                <div class="place-badge sto">🔧</div>
+                <div class="place-content">
+                    <h4>ТехЦентр Премиум</h4>
+                    <p class="place-address">📍 ул. Промышленная, 45</p>
+                    <p class="place-info">⭐ 4.9 • Официальный дилер, гарантия</p>
+                    <p class="place-time">🕐 Пн-Сб 8:00-21:00</p>
+                    <p class="place-distance">🚗 3.2 км • ~10 мин</p>
                 </div>
-                <button class="btn-icon">→</button>
+                <button class="btn-route" onclick="openRoute('55.751244,37.618423')">→</button>
             </div>
+
+            <!-- Шиномонтаж -->
+            <div class="place-card" data-type="tire" data-distance="1.5">
+                <div class="place-badge tire">🛞</div>
+                <div class="place-content">
+                    <h4>Шиномонтаж 24/7</h4>
+                    <p class="place-address">📍 ул. Гагарина, 78</p>
+                    <p class="place-info">⭐ 4.2 • Круглосуточно, мобильный выезд</p>
+                    <p class="place-time">🕐 24/7</p>
+                    <p class="place-distance">🚗 1.5 км • ~4 мин</p>
+                </div>
+                <button class="btn-route" onclick="openRoute('55.751244,37.618423')">→</button>
+            </div>
+
+            <div class="place-card" data-type="tire" data-distance="3.5">
+                <div class="place-badge tire">🛞</div>
+                <div class="place-content">
+                    <h4>Шинный Центр</h4>
+                    <p class="place-address">📍 Московское шоссе, 12</p>
+                    <p class="place-info">⭐ 4.6 • Продажа, замена, хранение</p>
+                    <p class="place-time">🕐 Пн-Вс 9:00-22:00</p>
+                    <p class="place-distance">🚗 3.5 км • ~11 мин</p>
+                </div>
+                <button class="btn-route" onclick="openRoute('55.751244,37.618423')">→</button>
+            </div>
+        </div>
+
+        <div class="map-tip">
+            <p>💡 Данные обновляются автоматически на основе вашего местоположения</p>
         </div>
     </div>
 
@@ -595,89 +678,3 @@
                     <span class="vin-result-label">🏭 WMI код:</span>
                     <strong id="result-wmi">-</strong>
                 </div>
-            </div>
-
-            <!-- Возможные модели -->
-            <div id="models-section" style="display: none;">
-                <h4>📋 Возможные модели:</h4>
-                <div id="models-list" class="models-grid"></div>
-            </div>
-
-            <!-- Выбор модели вручную -->
-            <div id="manual-model-section">
-                <h4>Выберите или введите модель:</h4>
-                <div class="form-group">
-                    <input 
-                        type="text" 
-                        id="model-input" 
-                        placeholder="Например: Camry, Solaris, Octavia"
-                        list="model-suggestions">
-                    <datalist id="model-suggestions"></datalist>
-                </div>
-            </div>
-
-            <!-- Пробег -->
-            <div class="form-group">
-                <label>Текущий пробег (км)</label>
-                <input type="number" id="mileage-input" placeholder="50000" min="0">
-            </div>
-
-            <!-- Кнопки действий -->
-            <div class="vin-actions">
-                <button class="btn-primary" onclick="saveCarFromVIN()">
-                    💾 Сохранить автомобиль
-                </button>
-                <button class="btn-secondary" onclick="resetVINDecoder()">
-                    🔄 Ввести другой VIN
-                </button>
-            </div>
-        </div>
-
-        <!-- Ошибка декодирования -->
-        <div class="error-card" id="vin-error" style="display: none;">
-            <h4>❌ Ошибка</h4>
-            <p id="error-message"></p>
-            <button class="btn-secondary" onclick="resetVINDecoder()">Попробовать снова</button>
-        </div>
-
-        <!-- Предупреждение о неизвестном WMI -->
-        <div class="warning-card" id="vin-warning" style="display: none;">
-            <h4>⚠️ Производитель не найден</h4>
-            <p id="warning-message"></p>
-            <p>Вы можете добавить автомобиль вручную:</p>
-            
-            <div class="form-group">
-                <label>Марка автомобиля</label>
-                <input type="text" id="manual-brand" placeholder="Toyota">
-            </div>
-            
-            <div class="form-group">
-                <label>Модель</label>
-                <input type="text" id="manual-model" placeholder="Camry">
-            </div>
-            
-            <div class="form-group">
-                <label>Текущий пробег (км)</label>
-                <input type="number" id="manual-mileage" placeholder="50000" min="0">
-            </div>
-            
-            <button class="btn-primary" onclick="saveManualCar()">
-                💾 Сохранить автомобиль
-            </button>
-        </div>
-
-        <div class="tips-card">
-            <h4>🔐 Безопасность</h4>
-            <p>VIN декодер работает полностью в вашем браузере. Данные не отправляются на сторонние серверы и остаются конфиденциальными.</p>
-        </div>
-
-        <div class="tips-card">
-            <h4>💡 Поддерживаемые марки</h4>
-            <p>В базе более 200 производителей из России, Европы, США, Японии, Кореи и Китая. Работает для всех автомобилей, зарегистрированных в России.</p>
-        </div>
-    </div>
-
-    <script src="vin-decoder.js"></script>
-    <script src="app.js"></script>
-</body>
-</html>

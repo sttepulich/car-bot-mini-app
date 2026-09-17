@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Авто Ассистент</title>
+    <title>Мой гараж</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
@@ -11,19 +11,25 @@
     <!-- Главное меню -->
     <div id="main-screen" class="screen active">
         <div class="header">
-            <h1>🚗 Авто Ассистент</h1>
-            <p class="subtitle">Все для вашего автомобиля</p>
+            <h1>🚗 Мой гараж</h1>
+            <p class="subtitle">Управление автомобилями</p>
         </div>
 
         <div class="car-info" id="car-info">
             <div class="car-card">
                 <div class="car-icon">🚙</div>
                 <div class="car-details">
-                    <h3 id="car-name">Выберите автомобиль</h3>
+                    <h3 id="car-name">Загрузка...</h3>
                     <p id="car-specs">-</p>
                 </div>
                 <button class="btn-icon" onclick="selectCar()">📝</button>
             </div>
+        </div>
+
+        <div class="quick-action">
+            <button class="btn-primary-outline" onclick="showScreen('vin-screen')">
+                ⚡ Добавить авто по VIN
+            </button>
         </div>
 
         <div class="menu-grid">
@@ -522,6 +528,153 @@
         </div>
     </div>
 
+    <!-- VIN Декодер -->
+    <div id="vin-screen" class="screen">
+        <div class="header">
+            <button class="btn-back" onclick="showScreen('main-screen')">← Назад</button>
+            <h2>⚡ Добавить авто по VIN</h2>
+        </div>
+
+        <div class="info-card">
+            <h4>ℹ️ Что такое VIN?</h4>
+            <p>VIN (Vehicle Identification Number) - уникальный 17-символьный код вашего автомобиля. Найти его можно:</p>
+            <ul>
+                <li>📄 В СТС (свидетельство о регистрации)</li>
+                <li>💳 В ПТС (паспорт ТС)</li>
+                <li>🚗 На кузове автомобиля (под капотом, на стойке двери)</li>
+            </ul>
+        </div>
+
+        <div class="calculator-form">
+            <div class="form-group">
+                <label>Введите VIN номер (17 символов)</label>
+                <input 
+                    type="text" 
+                    id="vin-input" 
+                    placeholder="WVWZZZ1KZDW123456" 
+                    maxlength="17"
+                    oninput="onVINInput(this.value)"
+                    style="text-transform: uppercase; font-family: monospace; font-size: 16px;">
+                <small id="vin-counter" style="color: #888;">0 / 17 символов</small>
+            </div>
+
+            <button class="btn-primary" onclick="decodeVINAction()" id="decode-btn" disabled>
+                🔍 Декодировать VIN
+            </button>
+        </div>
+
+        <!-- Результат декодирования -->
+        <div class="result-card" id="vin-result" style="display: none;">
+            <h3>✅ Данные автомобиля:</h3>
+            
+            <div class="vin-result-grid">
+                <div class="vin-result-item">
+                    <span class="vin-result-label">VIN номер:</span>
+                    <strong id="result-vin">-</strong>
+                </div>
+                
+                <div class="vin-result-item">
+                    <span class="vin-result-label">🚗 Марка:</span>
+                    <strong id="result-brand">-</strong>
+                </div>
+                
+                <div class="vin-result-item">
+                    <span class="vin-result-label">📅 Год выпуска:</span>
+                    <strong id="result-year">-</strong>
+                </div>
+                
+                <div class="vin-result-item">
+                    <span class="vin-result-label">🌍 Страна производства:</span>
+                    <strong id="result-country">-</strong>
+                </div>
+                
+                <div class="vin-result-item">
+                    <span class="vin-result-label">🏭 WMI код:</span>
+                    <strong id="result-wmi">-</strong>
+                </div>
+            </div>
+
+            <!-- Возможные модели -->
+            <div id="models-section" style="display: none;">
+                <h4>📋 Возможные модели:</h4>
+                <div id="models-list" class="models-grid"></div>
+            </div>
+
+            <!-- Выбор модели вручную -->
+            <div id="manual-model-section">
+                <h4>Выберите или введите модель:</h4>
+                <div class="form-group">
+                    <input 
+                        type="text" 
+                        id="model-input" 
+                        placeholder="Например: Camry, Solaris, Octavia"
+                        list="model-suggestions">
+                    <datalist id="model-suggestions"></datalist>
+                </div>
+            </div>
+
+            <!-- Пробег -->
+            <div class="form-group">
+                <label>Текущий пробег (км)</label>
+                <input type="number" id="mileage-input" placeholder="50000" min="0">
+            </div>
+
+            <!-- Кнопки действий -->
+            <div class="vin-actions">
+                <button class="btn-primary" onclick="saveCarFromVIN()">
+                    💾 Сохранить автомобиль
+                </button>
+                <button class="btn-secondary" onclick="resetVINDecoder()">
+                    🔄 Ввести другой VIN
+                </button>
+            </div>
+        </div>
+
+        <!-- Ошибка декодирования -->
+        <div class="error-card" id="vin-error" style="display: none;">
+            <h4>❌ Ошибка</h4>
+            <p id="error-message"></p>
+            <button class="btn-secondary" onclick="resetVINDecoder()">Попробовать снова</button>
+        </div>
+
+        <!-- Предупреждение о неизвестном WMI -->
+        <div class="warning-card" id="vin-warning" style="display: none;">
+            <h4>⚠️ Производитель не найден</h4>
+            <p id="warning-message"></p>
+            <p>Вы можете добавить автомобиль вручную:</p>
+            
+            <div class="form-group">
+                <label>Марка автомобиля</label>
+                <input type="text" id="manual-brand" placeholder="Toyota">
+            </div>
+            
+            <div class="form-group">
+                <label>Модель</label>
+                <input type="text" id="manual-model" placeholder="Camry">
+            </div>
+            
+            <div class="form-group">
+                <label>Текущий пробег (км)</label>
+                <input type="number" id="manual-mileage" placeholder="50000" min="0">
+            </div>
+            
+            <button class="btn-primary" onclick="saveManualCar()">
+                💾 Сохранить автомобиль
+            </button>
+        </div>
+
+        <div class="tips-card">
+            <h4>🔐 Безопасность</h4>
+            <p>VIN декодер работает полностью в вашем браузере. Данные не отправляются на сторонние серверы и остаются конфиденциальными.</p>
+        </div>
+
+        <div class="tips-card">
+            <h4>💡 Поддерживаемые марки</h4>
+            <p>В базе более 200 производителей из России, Европы, США, Японии, Кореи и Китая. Работает для всех автомобилей, зарегистрированных в России.</p>
+        </div>
+    </div>
+
+    <script src="vin-decoder.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

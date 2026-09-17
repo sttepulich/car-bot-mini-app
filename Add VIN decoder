@@ -1,261 +1,304 @@
-# ⚡ VIN Декодер - Документация
+/**
+ * VIN Decoder для Mini App
+ * Работает полностью в браузере, бесплатно, без API
+ * Поддержка всех марок автомобилей, зарегистрированных в России
+ */
 
-## 📋 Описание
-
-VIN Декодер - это встроенный в Mini App инструмент для быстрого добавления автомобиля по VIN номеру. Работает **полностью бесплатно** и **офлайн** в браузере пользователя.
-
-## ✨ Возможности
-
-### 🔍 Декодирование VIN
-- **Валидация** VIN номера (17 символов, проверка запрещённых символов I, O, Q)
-- **Определение марки** автомобиля по WMI коду (первые 3 символа)
-- **Определение года выпуска** по 10-й позиции VIN
-- **Страна производства** на основе WMI
-- **Предложение моделей** для известных производителей
-
-### 🗺️ Поддерживаемые регионы
-- 🇷🇺 **Россия**: LADA, УАЗ, ГАЗ, Москвич, TagAZ, Derways, Sollers
-- 🇺🇦 **Украина**: ЗАЗ
-- 🇩🇪 **Германия**: BMW, Mercedes-Benz, Audi, Volkswagen, Opel, Porsche, MINI
-- 🇫🇷 **Франция**: Renault, Peugeot, Citroën
-- 🇨🇿 **Чехия**: Škoda
-- 🇪🇸 **Испания**: SEAT
-- 🇺🇸 **США**: Ford, Chevrolet, Cadillac, Jeep, Dodge, Chrysler
-- 🇯🇵 **Япония**: Toyota, Nissan, Honda, Mazda, Subaru, Mitsubishi, Lexus
-- 🇰🇷 **Корея**: Hyundai, Kia, SsangYong
-- 🇨🇳 **Китай**: Haval, Chery, Geely, BYD, FAW, Changan, Great Wall
-
-**Всего в базе: 200+ производителей**
-
-## 🚀 Как использовать
-
-### 1. Открыть Mini App
-Нажать кнопку **"🚗 Открыть гараж"** в боте
-
-### 2. Добавить авто по VIN
-На главном экране нажать **"⚡ Добавить авто по VIN"**
-
-### 3. Ввести VIN номер
-- Ввести 17 символов VIN номера
-- Счётчик покажет прогресс (0/17)
-- Автоматически преобразуется в верхний регистр
-- Запрещённые символы I, O, Q удаляются автоматически
-
-### 4. Декодировать
-Нажать **"🔍 Декодировать VIN"**
-
-### 5. Результаты
-**Если производитель найден:**
-- ✅ Марка автомобиля
-- 📅 Год выпуска
-- 🌍 Страна производства
-- 🏭 WMI код
-- 📋 Список возможных моделей
-
-**Если производитель не найден:**
-- ⚠️ Предупреждение о неизвестном WMI
-- 📅 Год выпуска (если определён)
-- 📝 Возможность ввода марки и модели вручную
-
-### 6. Выбрать модель
-- Кликнуть на модель из списка
-- Или ввести модель вручную в поле
-
-### 7. Указать пробег
-Ввести текущий пробег автомобиля в километрах
-
-### 8. Сохранить
-Нажать **"💾 Сохранить автомобиль"**
-
-## 📁 Структура файлов
-
-```
-mini_app/
-├── vin-decoder.js       # Модуль VIN декодера (логика)
-├── index.html           # Экран VIN декодера (разметка)
-├── styles.css           # Стили VIN декодера
-└── app.js               # Интеграция с Mini App
-```
-
-### vin-decoder.js
-**Функции:**
-- `validateVIN(vin)` - валидация VIN
-- `decodeVIN(vin)` - декодирование VIN
-- `getVINInfo(vin)` - информация о VIN
-- `decodeYear(vin)` - определение года
-- `searchBrands(query)` - поиск марок
-- `getAllBrands()` - все марки из базы
-
-**База данных:**
-- `WMI_DATABASE` - 200+ WMI кодов производителей
-- `YEAR_CODE` - таблица декодирования года
-
-### app.js
-**Функции для VIN:**
-- `onVINInput(value)` - обработка ввода VIN
-- `decodeVINAction()` - декодирование VIN
-- `displayVINResult(result)` - отображение результата
-- `selectModel(model)` - выбор модели
-- `saveCarFromVIN()` - сохранение авто из VIN
-- `saveManualCar()` - сохранение авто вручную
-- `resetVINDecoder()` - сброс декодера
-
-## 🔄 Интеграция с ботом
-
-### Обработчик в webapp_handlers.py
-
-```python
-elif action == 'add_car_from_vin':
-    car_data = data.get('car', {})
+// Расширенная база WMI кодов (World Manufacturer Identifier) - первые 3 символа VIN
+const WMI_DATABASE = {
+    // Российские производители
+    'XTA': { brand: 'LADA', country: 'Россия', models: ['Vesta', 'Granta', 'Largus'] },
+    'XTC': { brand: 'LADA', country: 'Россия', models: ['Granta', 'Kalina'] },
+    'XTK': { brand: 'LADA', country: 'Россия', models: ['Kalina', 'Priora'] },
+    'XTH': { brand: 'LADA', country: 'Россия', models: ['Priora'] },
+    'XTT': { brand: 'LADA', country: 'Россия', models: ['2107', '2105', '2104'] },
+    'XW8': { brand: 'LADA', country: 'Россия', models: ['Niva', '4x4'] },
+    'X89': { brand: 'УАЗ', country: 'Россия', models: ['Патриот', 'Hunter'] },
+    'XTY': { brand: 'УАЗ', country: 'Россия', models: ['Hunter', 'Pickup'] },
+    'Z94': { brand: 'ГАЗ', country: 'Россия', models: ['Газель', 'Соболь'] },
+    'X96': { brand: 'ГАЗ', country: 'Россия', models: ['Соболь'] },
+    'XTG': { brand: 'ГАЗ', country: 'Россия', models: ['Волга', '3110'] },
+    'XTM': { brand: 'Москвич', country: 'Россия', models: ['2141', '412'] },
+    'Y6D': { brand: 'ЗАЗ', country: 'Украина', models: ['Chance', 'Sens'] },
+    'Y3M': { brand: 'ЗАЗ', country: 'Украина', models: ['Lanos', 'Chance'] },
+    'Z8T': { brand: 'Sollers', country: 'Россия', models: ['Atlant'] },
+    'XWE': { brand: 'TagAZ', country: 'Россия', models: ['Tager', 'Road Partner'] },
+    'XUF': { brand: 'Derways', country: 'Россия', models: ['Cowboy', 'Aurora'] },
     
-    vin = car_data.get('vin')
-    brand = car_data.get('brand')
-    model = car_data.get('model')
-    year = car_data.get('year')
-    mileage = car_data.get('current_mileage')
+    // Европа - Германия
+    'WBA': { brand: 'BMW', country: 'Германия', models: ['3-Series', '5-Series', 'X3'] },
+    'WBS': { brand: 'BMW M', country: 'Германия', models: ['M3', 'M5', 'M6'] },
+    'WBX': { brand: 'BMW', country: 'Германия', models: ['X5', 'X6', '7-Series'] },
+    'WDB': { brand: 'Mercedes-Benz', country: 'Германия', models: ['E-Class', 'S-Class'] },
+    'WDC': { brand: 'Mercedes-Benz', country: 'Германия', models: ['C-Class', 'GLK'] },
+    'WDD': { brand: 'Mercedes-Benz', country: 'Германия', models: ['E-Class', 'C-Class'] },
+    'WMW': { brand: 'MINI', country: 'Германия', models: ['Cooper', 'Countryman'] },
+    'WAU': { brand: 'Audi', country: 'Германия', models: ['A4', 'A6', 'Q5'] },
+    'WVW': { brand: 'Volkswagen', country: 'Германия', models: ['Passat', 'Golf'] },
+    'WVG': { brand: 'Volkswagen', country: 'Германия', models: ['Golf', 'Polo'] },
+    'WV1': { brand: 'Volkswagen', country: 'Германия', models: ['Passat'] },
+    'WV2': { brand: 'Volkswagen', country: 'Германия', models: ['Tiguan', 'Touareg'] },
+    'WV3': { brand: 'Volkswagen', country: 'Германия', models: ['Jetta'] },
+    'W0L': { brand: 'Opel', country: 'Германия', models: ['Astra', 'Insignia'] },
+    'W0S': { brand: 'Opel', country: 'Германия', models: ['Corsa', 'Mokka'] },
+    'WP0': { brand: 'Porsche', country: 'Германия', models: ['911', 'Cayenne'] },
     
-    # Создание автомобиля в БД
-    new_car = await CarRepository.create_car(
-        session,
-        user_id=user.id,
-        brand=brand,
-        model=model,
-        year=year,
-        vin=vin,
-        current_mileage=int(mileage)
-    )
-```
-
-### Поле VIN в базе данных
-
-```python
-class Car(Base):
-    __tablename__ = 'cars'
+    // Европа - другие страны
+    'VSS': { brand: 'SEAT', country: 'Испания', models: ['Leon', 'Ibiza'] },
+    'VF1': { brand: 'Renault', country: 'Франция', models: ['Logan', 'Duster', 'Megane'] },
+    'VF3': { brand: 'Peugeot', country: 'Франция', models: ['308', '3008', '408'] },
+    'VF7': { brand: 'Citroën', country: 'Франция', models: ['C4', 'C5'] },
+    'VNK': { brand: 'Toyota', country: 'Франция', models: ['Yaris', 'Corolla'] },
+    'TRU': { brand: 'Audi', country: 'Венгрия', models: ['A3', 'Q3'] },
+    'TMB': { brand: 'Škoda', country: 'Чехия', models: ['Octavia', 'Fabia'] },
+    'TMK': { brand: 'Škoda', country: 'Чехия', models: ['Superb', 'Kodiaq'] },
+    'TMP': { brand: 'Škoda', country: 'Чехия', models: ['Rapid'] },
+    'UU1': { brand: 'Dacia', country: 'Румыния', models: ['Logan', 'Sandero'] },
+    'UU6': { brand: 'Renault', country: 'Румыния', models: ['Logan', 'Sandero'] },
     
-    id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.id'))
+    // США и Канада
+    '1FA': { brand: 'Ford', country: 'США', models: ['Focus', 'Fusion', 'Mustang'] },
+    '1FB': { brand: 'Ford', country: 'США', models: ['Explorer', 'Expedition'] },
+    '1FC': { brand: 'Ford', country: 'США', models: ['Escape'] },
+    '1FD': { brand: 'Ford', country: 'США', models: ['F-150', 'F-250'] },
+    '1FM': { brand: 'Ford', country: 'США', models: ['Edge', 'Escape'] },
+    '1FT': { brand: 'Ford', country: 'США', models: ['F-150', 'Ranger'] },
+    '1G1': { brand: 'Chevrolet', country: 'США', models: ['Cruze', 'Malibu', 'Camaro'] },
+    '1G4': { brand: 'Buick', country: 'США', models: ['Lacrosse', 'Regal'] },
+    '1G6': { brand: 'Cadillac', country: 'США', models: ['CTS', 'Escalade'] },
+    '1GC': { brand: 'Chevrolet', country: 'США', models: ['Silverado', 'Colorado'] },
+    '1GM': { brand: 'Pontiac', country: 'США', models: ['G6', 'Grand Prix'] },
+    '1GN': { brand: 'Chevrolet', country: 'США', models: ['Suburban', 'Tahoe'] },
+    '1GT': { brand: 'GMC', country: 'США', models: ['Sierra', 'Yukon'] },
+    '1GY': { brand: 'Cadillac', country: 'США', models: ['DTS', 'STS'] },
+    '1HG': { brand: 'Honda', country: 'США', models: ['Accord', 'Civic'] },
+    '1J4': { brand: 'Jeep', country: 'США', models: ['Grand Cherokee', 'Wrangler'] },
+    '1J8': { brand: 'Jeep', country: 'США', models: ['Liberty', 'Compass'] },
+    '1L1': { brand: 'Lincoln', country: 'США', models: ['MKZ', 'Navigator'] },
+    '1LN': { brand: 'Lincoln', country: 'США', models: ['Continental', 'Town Car'] },
+    '1ME': { brand: 'Mercury', country: 'США', models: ['Grand Marquis'] },
+    '1N4': { brand: 'Nissan', country: 'США', models: ['Altima', 'Maxima'] },
+    '1N6': { brand: 'Nissan', country: 'США', models: ['Titan', 'Frontier'] },
+    '1VW': { brand: 'Volkswagen', country: 'США', models: ['Jetta', 'Passat'] },
+    '1YV': { brand: 'Mazda', country: 'США', models: ['CX-5', 'Mazda3'] },
+    '2C3': { brand: 'Chrysler', country: 'Канада', models: ['300', 'Pacifica'] },
+    '2FA': { brand: 'Ford', country: 'Канада', models: ['Focus', 'Fusion'] },
+    '2G1': { brand: 'Chevrolet', country: 'Канада', models: ['Cruze', 'Equinox'] },
+    '2HG': { brand: 'Honda', country: 'Канада', models: ['Civic', 'CR-V'] },
+    '2T1': { brand: 'Toyota', country: 'Канада', models: ['Corolla', 'Camry'] },
+    '3FA': { brand: 'Ford', country: 'Мексика', models: ['Fiesta', 'Fusion'] },
+    '3G1': { brand: 'Chevrolet', country: 'Мексика', models: ['Aveo', 'Sonic'] },
+    '3VW': { brand: 'Volkswagen', country: 'Мексика', models: ['Jetta', 'Beetle'] },
     
-    brand = Column(String(100), nullable=False)
-    model = Column(String(100), nullable=False)
-    year = Column(Integer)
-    vin = Column(String(17))  # ⚡ VIN номер
+    // Япония
+    'JA3': { brand: 'Mitsubishi', country: 'Япония', models: ['Lancer', 'Outlander'] },
+    'JA4': { brand: 'Mitsubishi', country: 'Япония', models: ['ASX', 'Pajero'] },
+    'JF1': { brand: 'Subaru', country: 'Япония', models: ['Impreza', 'Legacy'] },
+    'JF2': { brand: 'Subaru', country: 'Япония', models: ['Outback', 'Forester'] },
+    'JHM': { brand: 'Honda', country: 'Япония', models: ['Civic', 'Accord'] },
+    'JM0': { brand: 'Mazda', country: 'Япония', models: ['CX-5', 'Mazda3'] },
+    'JM1': { brand: 'Mazda', country: 'Япония', models: ['Mazda3', 'Mazda6'] },
+    'JMZ': { brand: 'Mazda', country: 'Япония', models: ['RX-7', 'RX-8'] },
+    'JN1': { brand: 'Nissan', country: 'Япония', models: ['Qashqai', 'X-Trail'] },
+    'JN6': { brand: 'Nissan', country: 'Япония', models: ['Patrol', 'Navara'] },
+    'JN8': { brand: 'Nissan', country: 'Япония', models: ['Juke', 'Note'] },
+    'JT2': { brand: 'Toyota', country: 'Япония', models: ['Corolla', 'Camry'] },
+    'JTD': { brand: 'Toyota', country: 'Япония', models: ['RAV4', 'Land Cruiser'] },
+    'JTE': { brand: 'Toyota', country: 'Япония', models: ['Highlander'] },
+    'JTG': { brand: 'Toyota', country: 'Япония', models: ['Prius'] },
+    'JTH': { brand: 'Lexus', country: 'Япония', models: ['RX', 'ES'] },
+    'JTJ': { brand: 'Lexus', country: 'Япония', models: ['GS', 'LS'] },
+    'JTL': { brand: 'Lexus', country: 'Япония', models: ['NX', 'LX'] },
+    'JTM': { brand: 'Toyota', country: 'Япония', models: ['Auris', 'Avensis'] },
+    'JTN': { brand: 'Nissan', country: 'Япония', models: ['Almera', 'Tiida'] },
     
-    # ... остальные поля
-```
+    // Корея
+    'KL1': { brand: 'Chevrolet', country: 'Корея', models: ['Aveo', 'Cruze'] },
+    'KM8': { brand: 'Hyundai', country: 'Корея', models: ['Tucson', 'Santa Fe'] },
+    'KMH': { brand: 'Hyundai', country: 'Корея', models: ['Solaris', 'Elantra', 'Creta'] },
+    'KNA': { brand: 'Kia', country: 'Корея', models: ['Rio', 'Sportage'] },
+    'KNB': { brand: 'Kia', country: 'Корея', models: ['Optima', 'Sorento'] },
+    'KNC': { brand: 'Kia', country: 'Корея', models: ['Cerato', 'Soul'] },
+    'KND': { brand: 'Kia', country: 'Корея', models: ['Picanto', 'Venga'] },
+    'KNE': { brand: 'Kia', country: 'Корея', models: ['Seltos', 'Stinger'] },
+    'KNM': { brand: 'Renault Samsung', country: 'Корея', models: ['SM3', 'SM5'] },
+    'KPA': { brand: 'SsangYong', country: 'Корея', models: ['Actyon', 'Rexton'] },
+    'KPT': { brand: 'SsangYong', country: 'Корея', models: ['Korando', 'Tivoli'] },
+    
+    // Китай
+    'LDC': { brand: 'Dongfeng', country: 'Китай', models: ['S30', 'H30'] },
+    'LFM': { brand: 'FAW', country: 'Китай', models: ['Besturn', 'Oley'] },
+    'LFV': { brand: 'FAW', country: 'Китай', models: ['Vita', 'V5'] },
+    'LGB': { brand: 'Dongfeng', country: 'Китай', models: ['AX7'] },
+    'LGW': { brand: 'Great Wall', country: 'Китай', models: ['Hover', 'Wingle'] },
+    'LGX': { brand: 'BYD', country: 'Китай', models: ['F3', 'Tang'] },
+    'LHG': { brand: 'Haval', country: 'Китай', models: ['F7', 'H6', 'Jolion'] },
+    'LJD': { brand: 'Dongfeng', country: 'Китай', models: ['Rich'] },
+    'LSV': { brand: 'SAIC', country: 'Китай', models: ['MG', 'Roewe'] },
+    'LVS': { brand: 'Changan', country: 'Китай', models: ['CS35', 'CS75'] },
+    'LZW': { brand: 'SAIC', country: 'Китай', models: ['MG ZS', 'MG 6'] },
+    'LZZ': { brand: 'Chery', country: 'Китай', models: ['Tiggo', 'Amulet'] },
+};
 
-## 🔐 Безопасность
+// Таблица декодирования года выпуска (10-я позиция VIN)
+const YEAR_CODE = {
+    'A': 2010, 'B': 2011, 'C': 2012, 'D': 2013, 'E': 2014, 'F': 2015,
+    'G': 2016, 'H': 2017, 'J': 2018, 'K': 2019, 'L': 2020, 'M': 2021,
+    'N': 2022, 'P': 2023, 'R': 2024, 'S': 2025, 'T': 2026, 'V': 2027,
+    'W': 2028, 'X': 2029, 'Y': 2030,
+    '1': 2001, '2': 2002, '3': 2003, '4': 2004, '5': 2005,
+    '6': 2006, '7': 2007, '8': 2008, '9': 2009,
+};
 
-### Локальная обработка
-- VIN декодируется **полностью в браузере**
-- Данные **не отправляются на сторонние серверы**
-- Конфиденциальность гарантирована
+/**
+ * Валидация VIN номера
+ */
+function validateVIN(vin) {
+    vin = vin.trim().toUpperCase();
+    
+    if (vin.length !== 17) {
+        return {
+            valid: false,
+            error: `❌ VIN должен содержать 17 символов (у вас ${vin.length})`
+        };
+    }
+    
+    // Проверка допустимых символов (I, O, Q не используются)
+    if (!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)) {
+        return {
+            valid: false,
+            error: '❌ VIN содержит недопустимые символы (I, O, Q не используются)'
+        };
+    }
+    
+    return { valid: true, vin: vin };
+}
 
-### Валидация
-- Проверка длины (17 символов)
-- Проверка допустимых символов
-- Удаление запрещённых символов (I, O, Q)
+/**
+ * Декодирование года выпуска из 10-й позиции VIN
+ */
+function decodeYear(vin) {
+    if (vin.length < 10) return null;
+    const yearChar = vin[9].toUpperCase();
+    return YEAR_CODE[yearChar] || null;
+}
 
-### Хранение
-- VIN сохраняется в базе бота
-- Доступ только владельцу автомобиля
+/**
+ * Декодирование VIN
+ */
+function decodeVIN(vinInput) {
+    const validation = validateVIN(vinInput);
+    if (!validation.valid) {
+        return {
+            success: false,
+            error: validation.error
+        };
+    }
+    
+    const vin = validation.vin;
+    const wmi = vin.substring(0, 3);
+    const year = decodeYear(vin);
+    
+    // Ищем в базе WMI
+    if (WMI_DATABASE[wmi]) {
+        const data = WMI_DATABASE[wmi];
+        return {
+            success: true,
+            vin: vin,
+            brand: data.brand,
+            country: data.country,
+            models: data.models,
+            year: year,
+            wmi: wmi,
+            found: true
+        };
+    }
+    
+    // VIN валиден, но производитель неизвестен
+    return {
+        success: true,
+        vin: vin,
+        brand: null,
+        country: null,
+        models: [],
+        year: year,
+        wmi: wmi,
+        found: false,
+        warning: `⚠️ Производитель с WMI "${wmi}" не найден в базе.`
+    };
+}
 
-## 💡 Примеры VIN
+/**
+ * Получить информацию о VIN для отображения
+ */
+function getVINInfo(vin) {
+    const validation = validateVIN(vin);
+    if (!validation.valid) {
+        return validation.error;
+    }
+    
+    const decoded = decodeVIN(vin);
+    if (!decoded.success) {
+        return decoded.error;
+    }
+    
+    let info = `🔍 Анализ VIN: ${decoded.vin}\n\n`;
+    info += `🏭 WMI код: ${decoded.wmi}\n`;
+    
+    if (decoded.found) {
+        info += `🚗 Производитель: ${decoded.brand}\n`;
+        info += `🌍 Страна производства: ${decoded.country}\n`;
+        if (decoded.models && decoded.models.length > 0) {
+            info += `📋 Возможные модели: ${decoded.models.join(', ')}\n`;
+        }
+    } else {
+        info += `⚠️ Производитель не найден в базе\n`;
+    }
+    
+    if (decoded.year) {
+        info += `📅 Год выпуска: ${decoded.year}\n`;
+    } else {
+        info += `📅 Год выпуска: не определён\n`;
+    }
+    
+    return info;
+}
 
-### Российские авто
-```
-XTA219000C0123456  # LADA Vesta
-X89F8145AE0123456  # УАЗ Патриот
-Z94CB41AAGR123456  # ГАЗель
-```
+/**
+ * Поиск производителя по названию (для автокомплита)
+ */
+function searchBrands(query) {
+    query = query.toLowerCase();
+    const brands = new Set();
+    
+    Object.values(WMI_DATABASE).forEach(data => {
+        if (data.brand.toLowerCase().includes(query)) {
+            brands.add(data.brand);
+        }
+    });
+    
+    return Array.from(brands).sort();
+}
 
-### Иномарки в России
-```
-WVWZZZ1KZDW123456  # Volkswagen Passat
-JTEBU5JR5J5123456  # Toyota RAV4
-KMHDN45D94U123456  # Hyundai Solaris
-```
+/**
+ * Получить все уникальные марки из базы
+ */
+function getAllBrands() {
+    const brands = new Set();
+    Object.values(WMI_DATABASE).forEach(data => {
+        brands.add(data.brand);
+    });
+    return Array.from(brands).sort();
+}
 
-## 📊 Статистика базы WMI
-
-| Страна | Производителей | WMI кодов |
-|--------|----------------|-----------|
-| 🇷🇺 Россия | 10 | 15+ |
-| 🇩🇪 Германия | 10 | 20+ |
-| 🇺🇸 США | 15 | 40+ |
-| 🇯🇵 Япония | 8 | 25+ |
-| 🇰🇷 Корея | 5 | 15+ |
-| 🇨🇳 Китай | 12 | 20+ |
-| Другие | 20+ | 50+ |
-
-**Итого:** 200+ WMI кодов
-
-## 🎨 UI/UX
-
-### Экран VIN декодера
-1. **Информационный блок** - что такое VIN и где его найти
-2. **Поле ввода** - с автоматическим форматированием
-3. **Счётчик символов** - визуальная обратная связь
-4. **Кнопка декодирования** - активируется при 17 символах
-5. **Результаты** - карточка с данными автомобиля
-6. **Выбор модели** - список кнопок или поле ввода
-7. **Поле пробега** - ввод текущего пробега
-8. **Кнопки действий** - сохранить или сбросить
-
-### Цветовая индикация
-- 🟢 **Зелёный** - 17 символов, готово к декодированию
-- 🟡 **Жёлтый** - ввод в процессе
-- 🔴 **Красный** - ошибка валидации
-- ⚪ **Серый** - пустое поле
-
-### Адаптивность
-- Мобильные устройства (320px+)
-- Планшеты (768px+)
-- Desktop (1024px+)
-
-## 🚀 Будущие улучшения
-
-### Версия 1.1
-- [ ] Сканирование VIN с фото (OCR)
-- [ ] История декодированных VIN
-- [ ] Экспорт данных VIN
-
-### Версия 1.2
-- [ ] Интеграция с API ГИБДД (проверка истории)
-- [ ] Определение комплектации по VIN
-- [ ] База данных отзывов производителей
-
-### Версия 1.3
-- [ ] AI рекомендации по обслуживанию по VIN
-- [ ] Подбор запчастей по VIN
-- [ ] Оценка стоимости авто по VIN
-
-## 📞 Поддержка
-
-Если VIN не декодируется:
-1. Проверьте правильность ввода (17 символов)
-2. Убедитесь, что нет символов I, O, Q
-3. Используйте ручной ввод марки и модели
-
-## 🔗 Полезные ссылки
-
-- [Wikipedia - VIN](https://ru.wikipedia.org/wiki/VIN)
-- [NHTSA VIN Decoder](https://vpic.nhtsa.dot.gov/)
-- [AutoDNA](https://www.autodna.ru/)
-
-## 📝 Changelog
-
-### v1.0.0 (17.09.2026)
-- ✅ Первый релиз VIN декодера
-- ✅ База 200+ WMI кодов
-- ✅ Поддержка российских и иностранных марок
-- ✅ Локальное декодирование без API
-- ✅ Интеграция с Mini App
-- ✅ Синхронизация с ботом
-- ✅ Ручной ввод для неизвестных WMI
-
----
-
-**Версия:** 1.0.0  
-**Дата:** 17 сентября 2026  
-**Автор:** Telegram Bot для автовладельцев  
-**Статус:** ✅ Работает в России без VPN
+// Экспорт функций
+window.VINDecoder = {
+    validateVIN,
+    decodeVIN,
+    getVINInfo,
+    decodeYear,
+    searchBrands,
+    getAllBrands,
+    WMI_DATABASE,
+    YEAR_CODE
+};

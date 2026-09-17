@@ -678,3 +678,270 @@
                     <span class="vin-result-label">🏭 WMI код:</span>
                     <strong id="result-wmi">-</strong>
                 </div>
+            </div>
+
+            <!-- Возможные модели -->
+            <div id="models-section" style="display: none;">
+                <h4>📋 Возможные модели:</h4>
+                <div id="models-list" class="models-grid"></div>
+            </div>
+
+            <!-- Выбор модели вручную -->
+            <div id="manual-model-section">
+                <h4>Выберите или введите модель:</h4>
+                <div class="form-group">
+                    <input 
+                        type="text" 
+                        id="model-input" 
+                        placeholder="Например: Camry, Solaris, Octavia"
+                        list="model-suggestions">
+                    <datalist id="model-suggestions"></datalist>
+                </div>
+            </div>
+
+            <!-- Пробег -->
+            <div class="form-group">
+                <label>Текущий пробег (км)</label>
+                <input type="number" id="mileage-input" placeholder="50000" min="0">
+            </div>
+
+            <!-- Кнопки действий -->
+            <div class="vin-actions">
+                <button class="btn-primary" onclick="saveCarFromVIN()">
+                    💾 Сохранить автомобиль
+                </button>
+                <button class="btn-secondary" onclick="resetVINDecoder()">
+                    🔄 Ввести другой VIN
+                </button>
+            </div>
+        </div>
+
+        <!-- Ошибка декодирования -->
+        <div class="error-card" id="vin-error" style="display: none;">
+            <h4>❌ Ошибка</h4>
+            <p id="error-message"></p>
+            <button class="btn-secondary" onclick="resetVINDecoder()">Попробовать снова</button>
+        </div>
+
+        <!-- Предупреждение о неизвестном WMI -->
+        <div class="warning-card" id="vin-warning" style="display: none;">
+            <h4>⚠️ Производитель не найден</h4>
+            <p id="warning-message"></p>
+            <p>Вы можете добавить автомобиль вручную:</p>
+            
+            <div class="form-group">
+                <label>Марка автомобиля</label>
+                <input type="text" id="manual-brand" placeholder="Toyota">
+            </div>
+            
+            <div class="form-group">
+                <label>Модель</label>
+                <input type="text" id="manual-model" placeholder="Camry">
+            </div>
+            
+            <div class="form-group">
+                <label>Текущий пробег (км)</label>
+                <input type="number" id="manual-mileage" placeholder="50000" min="0">
+            </div>
+            
+            <button class="btn-primary" onclick="saveManualCar()">
+                💾 Сохранить автомобиль
+            </button>
+        </div>
+
+        <div class="tips-card">
+            <h4>🔐 Безопасность</h4>
+            <p>VIN декодер работает полностью в вашем браузере. Данные не отправляются на сторонние серверы и остаются конфиденциальными.</p>
+        </div>
+
+        <div class="tips-card">
+            <h4>💡 Поддерживаемые марки</h4>
+            <p>В базе более 200 производителей из России, Европы, США, Японии, Кореи и Китая. Работает для всех автомобилей, зарегистрированных в России.</p>
+        </div>
+    </div>
+
+    <!-- ЭКРАН: Редактор автомобиля -->
+    <div id="edit-car-screen" class="screen">
+        <div class="header">
+            <button class="btn-back" onclick="showScreen('main-screen')">← Назад</button>
+            <h2>✏️ Редактировать авто</h2>
+        </div>
+
+        <div class="edit-car-form">
+            <div class="form-group">
+                <label>🚗 Марка</label>
+                <input type="text" id="edit-brand" placeholder="Toyota">
+            </div>
+
+            <div class="form-group">
+                <label>📋 Модель</label>
+                <input type="text" id="edit-model" placeholder="Camry">
+            </div>
+
+            <div class="form-group">
+                <label>📅 Год выпуска</label>
+                <input type="number" id="edit-year" placeholder="2020" min="1900" max="2030">
+            </div>
+
+            <div class="form-group">
+                <label>🔢 Госномер</label>
+                <input type="text" id="edit-license-plate" placeholder="А123БВ777" style="text-transform: uppercase;">
+            </div>
+
+            <div class="form-group">
+                <label>⛽ Тип двигателя</label>
+                <select id="edit-engine-type">
+                    <option value="">Выберите тип</option>
+                    <option value="Бензин">Бензин</option>
+                    <option value="Дизель">Дизель</option>
+                    <option value="Гибрид">Гибрид</option>
+                    <option value="Электро">Электро</option>
+                    <option value="Газ">Газ</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>🔧 Объём двигателя (л)</label>
+                <input type="number" id="edit-engine-volume" placeholder="2.5" step="0.1" min="0">
+            </div>
+
+            <div class="form-group">
+                <label>📏 Текущий пробег (км)</label>
+                <input type="number" id="edit-mileage" placeholder="50000" min="0">
+            </div>
+
+            <div class="form-actions">
+                <button class="btn-primary" onclick="saveCarChanges()">
+                    💾 Сохранить изменения
+                </button>
+                <button class="btn-danger" onclick="confirmDeleteCar()">
+                    🗑️ Удалить автомобиль
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ЭКРАН: Инструменты -->
+    <div id="tools-screen" class="screen">
+        <div class="header">
+            <h2>🛠️ Инструменты</h2>
+            <p class="subtitle">Калькуляторы и помощники</p>
+        </div>
+
+        <div class="tools-grid">
+            <div class="tool-card" onclick="showScreen('fuel-screen')">
+                <div class="tool-icon">⛽</div>
+                <h3>Топливо</h3>
+                <p>Расчет расхода и стоимости</p>
+            </div>
+
+            <div class="tool-card" onclick="showScreen('tire-screen')">
+                <div class="tool-icon">🛞</div>
+                <h3>Шины</h3>
+                <p>Подбор размеров</p>
+            </div>
+
+            <div class="tool-card" onclick="showScreen('consumption-screen')">
+                <div class="tool-icon">📈</div>
+                <h3>Анализ</h3>
+                <p>Статистика расхода</p>
+            </div>
+
+            <div class="tool-card" onclick="showScreen('vin-screen')">
+                <div class="tool-icon">⚡</div>
+                <h3>VIN декодер</h3>
+                <p>Поиск авто по VIN</p>
+            </div>
+
+            <div class="tool-card" onclick="showScreen('map-screen')">
+                <div class="tool-icon">🗺️</div>
+                <h3>Карта</h3>
+                <p>Сервисы рядом</p>
+            </div>
+
+            <div class="tool-card" onclick="showScreen('docs-screen')">
+                <div class="tool-icon">📄</div>
+                <h3>Документы</h3>
+                <p>СТС, полис, права</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ЭКРАН: Настройки -->
+    <div id="settings-screen" class="screen">
+        <div class="header">
+            <h2>⚙️ Настройки</h2>
+            <p class="subtitle">Персонализация приложения</p>
+        </div>
+
+        <div class="settings-list">
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h3>🔔 Уведомления</h3>
+                    <p>Напоминания о ТО и страховке</p>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="notifications-toggle" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h3>🌙 Темная тема</h3>
+                    <p>Автоматически из Telegram</p>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="dark-mode-toggle" checked disabled>
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="setting-item" onclick="showScreen('reminders-screen')">
+                <div class="setting-info">
+                    <h3>⏰ Напоминания</h3>
+                    <p>Управление напоминаниями</p>
+                </div>
+                <span class="setting-arrow">→</span>
+            </div>
+
+            <div class="setting-item" onclick="showScreen('issues-screen')">
+                <div class="setting-info">
+                    <h3>🔧 История поломок</h3>
+                    <p>Все проблемы автомобиля</p>
+                </div>
+                <span class="setting-arrow">→</span>
+            </div>
+        </div>
+
+        <div class="about-section">
+            <h4>ℹ️ О приложении</h4>
+            <p>Версия: 1.0.0</p>
+            <p>Бот для автовладельцев в России</p>
+        </div>
+    </div>
+
+    <!-- НИЖНЯЯ НАВИГАЦИЯ -->
+    <nav class="bottom-nav">
+        <button class="nav-item active" onclick="navigateTo('main-screen')" data-screen="main-screen">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">Главная</span>
+        </button>
+        <button class="nav-item" onclick="navigateTo('tools-screen')" data-screen="tools-screen">
+            <span class="nav-icon">🛠️</span>
+            <span class="nav-label">Инструменты</span>
+        </button>
+        <button class="nav-item" onclick="navigateTo('stats-screen')" data-screen="stats-screen">
+            <span class="nav-icon">📊</span>
+            <span class="nav-label">Статистика</span>
+        </button>
+        <button class="nav-item" onclick="navigateTo('settings-screen')" data-screen="settings-screen">
+            <span class="nav-icon">⚙️</span>
+            <span class="nav-label">Настройки</span>
+        </button>
+    </nav>
+
+    <script src="vin-decoder.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

@@ -698,3 +698,379 @@ function resetVINDecoder() {
     // Скроллим к началу
     document.getElementById('vin-screen').scrollIntoView({ behavior: 'smooth' });
 }
+
+
+// ============================================
+// НАВИГАЦИЯ - Bottom Nav
+// ============================================
+
+function navigateTo(screenId) {
+    // Скрываем все экраны
+    document.querySelectorAll('.screen').forEach(screen => {
+        screen.classList.remove('active');
+    });
+    
+    // Показываем нужный экран
+    document.getElementById(screenId).classList.add('active');
+    
+    // Обновляем активную кнопку в навигации
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    
+    const activeNav = document.querySelector(`[data-screen="${screenId}"]`);
+    if (activeNav) {
+        activeNav.classList.add('active');
+    }
+    
+    // Скроллим вверх
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ============================================
+// РЕДАКТОР АВТОМОБИЛЯ
+// ============================================
+
+function loadCarDataToEditor() {
+    if (!currentCar) {
+        tg.showAlert('Сначала добавьте автомобиль');
+        showScreen('main-screen');
+        return;
+    }
+    
+    // Заполняем поля данными текущего авто
+    document.getElementById('edit-brand').value = currentCar.brand || '';
+    document.getElementById('edit-model').value = currentCar.model || '';
+    document.getElementById('edit-year').value = currentCar.year || '';
+    document.getElementById('edit-license-plate').value = currentCar.license_plate || '';
+    document.getElementById('edit-engine-type').value = currentCar.engine_type || '';
+    document.getElementById('edit-engine-volume').value = currentCar.engine_volume || '';
+    document.getElementById('edit-mileage').value = currentCar.current_mileage || '';
+}
+
+// Перехватываем переход на экран редактирования
+const originalShowScreen = window.showScreen;
+window.showScreen = function(screenId) {
+    if (screenId === 'edit-car-screen') {
+        loadCarDataToEditor();
+    }
+    originalShowScreen(screenId);
+};
+
+function saveCarChanges() {
+    const brand = document.getElementById('edit-brand').value.trim();
+    const model = document.getElementById('edit-model').value.trim();
+    const year = document.getElementById('edit-year').value.trim();
+    const licensePlate = document.getElementById('edit-license-plate').value.trim().toUpperCase();
+    const engineType = document.getElementById('edit-engine-type').value;
+    const engineVolume = document.getElementById('edit-engine-volume').value.trim();
+    const mileage = document.getElementById('edit-mileage').value.trim();
+    
+    // Валидация
+    if (!brand) {
+        tg.showAlert('Введите марку автомобиля');
+        return;
+    }
+    
+    if (!model) {
+        tg.showAlert('Введите модель автомобиля');
+        return;
+    }
+    
+    if (!mileage || parseInt(mileage) < 0) {
+        tg.showAlert('Введите корректный пробег');
+        return;
+    }
+    
+    // Формируем данные для отправки
+    const updatedCar = {
+        id: currentCar.id,
+        brand: brand,
+        model: model,
+        year: year ? parseInt(year) : null,
+        license_plate: licensePlate || null,
+        engine_type: engineType || null,
+        engine_volume: engineVolume ? parseFloat(engineVolume) : null,
+        current_mileage: parseInt(mileage)
+    };
+    
+    console.log('💾 Сохранение изменений авто:', updatedCar);
+    
+    // Отправляем в бот
+    tg.sendData(JSON.stringify({
+        action: 'update_car',
+        car: updatedCar
+    }));
+    
+    // Обновляем локальные данные
+    currentCar = updatedCar;
+    
+    // Обновляем отображение в гараже
+    updateCarDisplay(currentCar);
+    
+    // Сохраняем в localStorage
+    if (garageData && garageData.cars) {
+        const carIndex = garageData.cars.findIndex(c => c.id === currentCar.id);
+        if (carIndex !== -1) {
+            garageData.cars[carIndex] = currentCar;
+            localStorage.setItem('garageData', JSON.stringify(garageData));
+        }
+    }
+    
+    // Показываем уведомление
+    tg.showAlert('✅ Изменения сохранены!');
+    
+    // Возвращаемся на главный экран
+    setTimeout(() => {
+        navigateTo('main-screen');
+    }, 1500);
+}
+
+function confirmDeleteCar() {
+    tg.showConfirm(
+        '⚠️ Вы уверены, что хотите удалить этот автомобиль?\n\nВсе данные (ТО, расходы, поломки) будут удалены!',
+        (confirmed) => {
+            if (confirmed) {
+                deleteCar();
+            }
+        }
+    );
+}
+
+function deleteCar() {
+    if (!currentCar || !currentCar.id) {
+        tg.showAlert('Ошибка: автомобиль не найден');
+        return;
+    }
+    
+    console.log('🗑️ Удаление автомобиля:', currentCar.id);
+    
+    // Отправляем в бот
+    tg.sendData(JSON.stringify({
+        action: 'delete_car',
+        car_id: currentCar.id
+    }));
+    
+    // Удаляем из локальных данных
+    if (garageData && garageData.cars) {
+        garageData.cars = garageData.cars.filter(c => c.id !== currentCar.id);
+        localStorage.setItem('garageData', JSON.stringify(garageData));
+    }
+    
+    // Показываем уведомление
+    tg.showAlert('🗑️ Автомобиль удалён');
+    
+    // Закрываем Mini App
+    setTimeout(() => {
+        tg.close();
+    }, 1500);
+}
+
+function updateCarDisplay(car) {
+    if (!car) return;
+    
+    const carName = document.getElementById('car-name');
+    const carSpecs = document.getElementById('car-specs');
+    
+    if (carName) {
+        carName.textContent = `${car.brand} ${car.model}`;
+    }
+    
+    if (carSpecs) {
+        let specs = [];
+        if (car.year) specs.push(car.year);
+        if (car.engine_type) specs.push(car.engine_type);
+        if (car.engine_volume) specs.push(`${car.engine_volume}л`);
+        if (car.current_mileage) specs.push(`${car.current_mileage.toLocaleString()} км`);
+        
+        carSpecs.textContent = specs.join(' • ') || 'Добавьте данные';
+    }
+}
+
+
+// ============================================
+// КАРТА - СТО И ЗАПРАВКИ
+// ============================================
+
+let userLocation = null;
+let currentFilter = 'all';
+
+function requestLocation() {
+    if (!navigator.geolocation) {
+        tg.showAlert('❌ Геолокация не поддерживается вашим устройством');
+        return;
+    }
+    
+    console.log('📍 Запрос геолокации...');
+    
+    navigator.geolocation.getCurrentPosition(
+        (position) => {
+            userLocation = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+            };
+            
+            console.log('✅ Геолокация получена:', userLocation);
+            
+            // Обновляем карту
+            showMapWithLocation();
+            
+            // Обновляем расстояния до мест
+            updatePlacesDistances();
+            
+            tg.showAlert('✅ Местоположение определено');
+        },
+        (error) => {
+            console.error('❌ Ошибка геолокации:', error);
+            
+            let errorMessage = 'Не удалось определить местоположение';
+            
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    errorMessage = 'Вы запретили доступ к геолокации. Разрешите в настройках браузера.';
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    errorMessage = 'Местоположение недоступно';
+                    break;
+                case error.TIMEOUT:
+                    errorMessage = 'Превышено время ожидания';
+                    break;
+            }
+            
+            tg.showAlert(errorMessage);
+        },
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+        }
+    );
+}
+
+function showMapWithLocation() {
+    if (!userLocation) return;
+    
+    const mapView = document.getElementById('map-view');
+    
+    // Используем Yandex Maps (работает в России)
+    const yandexMapUrl = `https://yandex.ru/maps/?ll=${userLocation.lng},${userLocation.lat}&z=14&l=map`;
+    
+    mapView.innerHTML = `
+        <button class="btn-locate" onclick="requestLocation()">
+            <span>📍</span> Обновить
+        </button>
+        <iframe 
+            src="${yandexMapUrl}" 
+            width="100%" 
+            height="100%" 
+            frameborder="0" 
+            style="border: none; border-radius: var(--radius-lg);">
+        </iframe>
+    `;
+}
+
+function updatePlacesDistances() {
+    // В реальном приложении здесь будет расчет реальных расстояний через API
+    // Сейчас просто обновляем счетчик
+    const allPlaces = document.querySelectorAll('.place-card');
+    const visiblePlaces = Array.from(allPlaces).filter(place => {
+        return place.style.display !== 'none';
+    });
+    
+    const countEl = document.getElementById('places-count');
+    if (countEl) {
+        countEl.textContent = `${visiblePlaces.length} найдено`;
+    }
+    
+    // Сортируем по расстоянию
+    const placesList = document.getElementById('places-list');
+    const sortedPlaces = Array.from(allPlaces).sort((a, b) => {
+        const distA = parseFloat(a.dataset.distance) || 999;
+        const distB = parseFloat(b.dataset.distance) || 999;
+        return distA - distB;
+    });
+    
+    // Перемещаем в отсортированном порядке
+    const header = placesList.querySelector('.places-header');
+    sortedPlaces.forEach(place => {
+        if (header) {
+            header.insertAdjacentElement('afterend', place);
+        }
+    });
+}
+
+function filterPlaces(type) {
+    currentFilter = type;
+    
+    // Обновляем активную кнопку
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.type === type) {
+            btn.classList.add('active');
+        }
+    });
+    
+    // Фильтруем карточки
+    const places = document.querySelectorAll('.place-card');
+    let visibleCount = 0;
+    
+    places.forEach(place => {
+        if (type === 'all' || place.dataset.type === type) {
+            place.style.display = 'flex';
+            visibleCount++;
+        } else {
+            place.style.display = 'none';
+        }
+    });
+    
+    // Обновляем счетчик
+    const countEl = document.getElementById('places-count');
+    if (countEl) {
+        countEl.textContent = `${visibleCount} найдено`;
+    }
+    
+    // Анимация
+    places.forEach((place, index) => {
+        if (place.style.display === 'flex') {
+            setTimeout(() => {
+                place.style.animation = 'slideIn 0.3s ease-out';
+            }, index * 50);
+        }
+    });
+}
+
+function openRoute(coords) {
+    if (!coords) return;
+    
+    // Открываем маршрут в Yandex Maps
+    const [lat, lng] = coords.split(',');
+    
+    if (userLocation) {
+        // Маршрут от текущего местоположения
+        const routeUrl = `https://yandex.ru/maps/?rtext=${userLocation.lat},${userLocation.lng}~${lat},${lng}&rtt=auto`;
+        window.open(routeUrl, '_blank');
+    } else {
+        // Просто открываем точку на карте
+        const pointUrl = `https://yandex.ru/maps/?ll=${lng},${lat}&z=16&l=map`;
+        window.open(pointUrl, '_blank');
+    }
+}
+
+// Инициализация карты при загрузке экрана
+document.addEventListener('DOMContentLoaded', () => {
+    // Устанавливаем начальный счётчик
+    updatePlacesDistances();
+    
+    // Автоматически запрашиваем геолокацию при первом открытии карты
+    const originalShowScreenMap = window.showScreen;
+    window.showScreen = function(screenId) {
+        if (originalShowScreenMap) originalShowScreenMap(screenId);
+        
+        if (screenId === 'map-screen' && !userLocation) {
+            // Небольшая задержка для плавности
+            setTimeout(() => {
+                // requestLocation(); // Раскомментируй, если нужна автозагрузка геолокации
+            }, 500);
+        }
+    };
+});

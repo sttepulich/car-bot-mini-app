@@ -98,11 +98,20 @@ function loadDemoData() {
 
 // 🔄 Обновление отображения гаража
 function updateGarageDisplay(cars) {
+    const carInfo = document.getElementById('car-info');
+    const emptyState = document.getElementById('empty-garage');
+    
     if (!cars || cars.length === 0) {
-        document.getElementById('car-name').textContent = 'Нет автомобилей';
-        document.getElementById('car-specs').textContent = 'Добавьте автомобиль в боте';
+        // Показываем пустое состояние
+        if (carInfo) carInfo.style.display = 'none';
+        if (emptyState) emptyState.style.display = 'block';
+        console.log('📭 Гараж пуст - показываем заглушку');
         return;
     }
+    
+    // Скрываем пустое состояние, показываем авто
+    if (carInfo) carInfo.style.display = 'block';
+    if (emptyState) emptyState.style.display = 'none';
     
     // Показываем первый автомобиль
     const car = cars[0];

@@ -1,0 +1,485 @@
+/* 🎨 ПРЕМИАЛЬНЫЕ ДОПОЛНЕНИЯ К ДИЗАЙНУ */
+
+/* ============================================
+   ПУСТОЕ СОСТОЯНИЕ ГАРАЖА
+   ============================================ */
+
+.empty-state {
+    margin: 40px 0;
+}
+
+.empty-card {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.03) 0%, rgba(139, 92, 246, 0.03) 100%);
+    border: 2px dashed rgba(59, 130, 246, 0.3);
+    border-radius: var(--radius-xl);
+    padding: 60px 32px;
+    text-align: center;
+    animation: fadeInScale 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.empty-icon {
+    margin-bottom: 24px;
+    animation: float 3s ease-in-out infinite;
+}
+
+.empty-icon svg {
+    stroke: rgba(59, 130, 246, 0.4);
+    stroke-width: 1.5;
+    filter: drop-shadow(0 4px 8px rgba(59, 130, 246, 0.2));
+}
+
+.empty-card h3 {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--purple) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.empty-card p {
+    font-size: 15px;
+    color: var(--text-tertiary);
+    line-height: 1.6;
+    margin-bottom: 32px;
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.empty-card .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 auto;
+    max-width: 280px;
+}
+
+.empty-card .btn-primary svg {
+    stroke: white;
+    flex-shrink: 0;
+}
+
+/* ============================================
+   SVG ИКОНКИ В МЕНЮ И КАРТОЧКАХ
+   ============================================ */
+
+.car-icon-svg,
+.menu-icon-svg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.car-icon-svg {
+    animation: float 3s ease-in-out infinite;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+}
+
+.car-icon-svg svg {
+    stroke: white;
+}
+
+.menu-icon-svg {
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+.menu-icon-svg svg {
+    stroke: var(--primary);
+    transition: var(--transition);
+}
+
+.menu-item:hover .menu-icon-svg svg {
+    stroke: var(--purple);
+    transform: scale(1.1);
+}
+
+/* ============================================
+   SVG ИКОНКИ В BOTTOM NAV
+   ============================================ */
+
+.nav-icon-svg {
+    stroke: var(--text-tertiary);
+    transition: var(--transition-fast);
+}
+
+.nav-item.active .nav-icon-svg {
+    stroke: var(--primary);
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.5));
+}
+
+/* ============================================
+   GLASSMORPHISM ЭФФЕКТЫ
+   ============================================ */
+
+.glass-card {
+    background: rgba(26, 26, 26, 0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: var(--shadow-xl), 
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.bottom-nav {
+    background: rgba(26, 26, 26, 0.95);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* ============================================
+   АНИМАЦИИ ПРИ ПЕРЕХОДАХ
+   ============================================ */
+
+.screen {
+    animation: slideInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================
+   ПРЕМИАЛЬНЫЕ ГРАДИЕНТЫ
+   ============================================ */
+
+.gradient-primary {
+    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+}
+
+.gradient-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.gradient-danger {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+.gradient-warning {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ============================================
+   КАРТА - ИСПРАВЛЕНИЯ
+   ============================================ */
+
+.map-container {
+    position: relative;
+    width: 100%;
+    height: 400px; /* Увеличена высота */
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    margin: 16px 0;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+}
+
+.map-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.btn-locate {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 100;
+    padding: 12px 16px;
+    background: white;
+    border: none;
+    border-radius: var(--radius-full);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primary);
+    box-shadow: var(--shadow-lg);
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-locate svg {
+    width: 18px;
+    height: 18px;
+    stroke: var(--primary);
+}
+
+.btn-locate:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-xl);
+}
+
+.btn-locate:active {
+    transform: scale(0.95);
+}
+
+/* Скрытие placeholder когда карта загружена */
+.map-container.loaded .map-placeholder {
+    display: none;
+}
+
+/* ============================================
+   PLACE CARD - УЛУЧШЕННЫЙ ДИЗАЙН
+   ============================================ */
+
+.place-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    margin-bottom: 12px;
+    display: flex;
+    gap: 14px;
+    transition: var(--transition);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.place-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--primary) 0%, var(--purple) 100%);
+    opacity: 0;
+    transition: var(--transition);
+}
+
+.place-card:hover::before {
+    opacity: 1;
+}
+
+.place-card:hover {
+    border-color: var(--primary);
+    transform: translateX(4px);
+    box-shadow: var(--shadow-md);
+}
+
+.place-badge {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+    position: relative;
+}
+
+.place-badge.gas {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(220, 38, 38, 0.15) 100%);
+    border: 2px solid rgba(239, 68, 68, 0.3);
+}
+
+.place-badge.sto {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(37, 99, 235, 0.15) 100%);
+    border: 2px solid rgba(59, 130, 246, 0.3);
+}
+
+.place-badge.tire {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(124, 58, 237, 0.15) 100%);
+    border: 2px solid rgba(139, 92, 246, 0.3);
+}
+
+.place-content {
+    flex: 1;
+}
+
+.place-content h4 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+}
+
+.place-content p {
+    font-size: 13px;
+    color: var(--text-tertiary);
+    line-height: 1.5;
+    margin: 4px 0;
+}
+
+.place-distance {
+    color: var(--primary) !important;
+    font-weight: 600;
+}
+
+.btn-route {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-full);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--purple) 100%);
+    border: none;
+    color: white;
+    font-size: 20px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.btn-route:hover {
+    transform: translateY(-2px) rotate(15deg);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+}
+
+.btn-route:active {
+    transform: scale(0.9);
+}
+
+/* ============================================
+   ФИЛЬТРЫ КАРТЫ
+   ============================================ */
+
+.map-filters {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    margin: 16px 0;
+    padding-bottom: 10px;
+    -webkit-overflow-scrolling: touch;
+}
+
+.map-filters::-webkit-scrollbar {
+    height: 4px;
+}
+
+.map-filters::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 4px;
+}
+
+.filter-btn {
+    flex-shrink: 0;
+    padding: 10px 20px;
+    background: var(--bg-secondary);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-full);
+    color: var(--text-tertiary);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.filter-btn span {
+    font-size: 18px;
+}
+
+.filter-btn.active {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--purple) 100%);
+    border-color: transparent;
+    color: white;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    transform: translateY(-2px);
+}
+
+.filter-btn:not(.active):hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-light);
+}
+
+.filter-btn:active {
+    transform: scale(0.95);
+}
+
+/* ============================================
+   МОБИЛЬНЫЕ ОПТИМИЗАЦИИ
+   ============================================ */
+
+@media (max-width: 768px) {
+    .empty-card {
+        padding: 48px 24px;
+    }
+    
+    .empty-icon svg {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .empty-card h3 {
+        font-size: 20px;
+    }
+    
+    .empty-card p {
+        font-size: 14px;
+        max-width: 260px;
+    }
+    
+    .map-container {
+        height: 350px;
+    }
+    
+    .place-card {
+        padding: 14px;
+    }
+    
+    .place-badge {
+        width: 44px;
+        height: 44px;
+        font-size: 20px;
+    }
+    
+    .btn-route {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 375px) {
+    .empty-card {
+        padding: 40px 20px;
+    }
+    
+    .map-container {
+        height: 300px;
+    }
+}

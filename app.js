@@ -293,16 +293,22 @@ function calculateTires() {
 
     // Рекомендация
     let recommendation = '';
+    let recommendationClass = '';
     const absDiff = Math.abs(parseFloat(percentDiff));
     
     if (absDiff < 1.5) {
         recommendation = '✅ Размеры совместимы! Разница в допустимых пределах.';
+        recommendationClass = 'success';
     } else if (absDiff < 3) {
         recommendation = '⚠️ Размеры приемлемы, но возможны небольшие погрешности спидометра.';
+        recommendationClass = 'warning';
     } else {
         recommendation = '❌ Размеры не рекомендуются! Большая разница может повлиять на управляемость.';
+        recommendationClass = 'danger';
     }
 
+    const recommendationCard = document.getElementById('tire-recommendation-card');
+    recommendationCard.className = `tire-recommendation-card glass-card ${recommendationClass}`;
     document.getElementById('tire-recommendation').textContent = recommendation;
     document.getElementById('tire-result').style.display = 'block';
 

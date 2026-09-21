@@ -36,7 +36,7 @@
         </div>
         
         <div class="header">
-            <h1>🚗 Мой гараж</h1>
+            <h1>Мой гараж</h1>
             <p class="subtitle">Управление автомобилями</p>
         </div>
 
@@ -53,13 +53,23 @@
 
         <div class="quick-action">
             <button class="btn-primary-outline" onclick="showScreen('vin-screen')">
-                ⚡ Добавить авто по VIN
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                </svg>
+                Добавить авто по VIN
             </button>
         </div>
 
         <div class="menu-grid">
             <div class="menu-item" onclick="showScreen('fuel-screen')">
-                <div class="menu-icon">⛽</div>
+                <div class="menu-icon-svg">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M3 22V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/>
+                        <path d="M3 10h8"/>
+                        <path d="M13 6h5a2 2 0 0 1 2 2v3"/>
+                        <path d="M21 12v6a1 1 1 0 0 1-1 1h-1"/>
+                    </svg>
+                </div>
                 <div class="menu-text">
                     <h3>Калькулятор топлива</h3>
                     <p>Расчет расхода и стоимости</p>
@@ -67,7 +77,13 @@
             </div>
 
             <div class="menu-item" onclick="showScreen('tire-screen')">
-                <div class="menu-icon">🛞</div>
+                <div class="menu-icon-svg">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="12" cy="12" r="10"/>
+                        <circle cx="12" cy="12" r="6"/>
+                        <circle cx="12" cy="12" r="2"/>
+                    </svg>
+                </div>
                 <div class="menu-text">
                     <h3>Калькулятор шин</h3>
                     <p>Подбор размеров</p>
@@ -75,7 +91,13 @@
             </div>
 
             <div class="menu-item" onclick="showScreen('consumption-screen')">
-                <div class="menu-icon">📊</div>
+                <div class="menu-icon-svg">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <line x1="18" y1="20" x2="18" y2="10"/>
+                        <line x1="12" y1="20" x2="12" y2="4"/>
+                        <line x1="6" y1="20" x2="6" y2="14"/>
+                    </svg>
+                </div>
                 <div class="menu-text">
                     <h3>Анализ расхода</h3>
                     <p>Статистика потребления</p>
@@ -83,7 +105,12 @@
             </div>
 
             <div class="menu-item" onclick="showScreen('reminders-screen')">
-                <div class="menu-icon">⏰</div>
+                <div class="menu-icon-svg">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                </div>
                 <div class="menu-text">
                     <h3>Напоминания</h3>
                     <p>ТО, страховка, налоги</p>
@@ -91,7 +118,12 @@
             </div>
 
             <div class="menu-item" onclick="showScreen('map-screen')">
-                <div class="menu-icon">🗺️</div>
+                <div class="menu-icon-svg">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                        <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                </div>
                 <div class="menu-text">
                     <h3>Карта сервисов</h3>
                     <p>Ближайшие СТО и заправки</p>
@@ -99,7 +131,14 @@
             </div>
 
             <div class="menu-item" onclick="showScreen('docs-screen')">
-                <div class="menu-icon">📄</div>
+                <div class="menu-icon-svg">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                    </svg>
+                </div>
                 <div class="menu-text">
                     <h3>Документы</h3>
                     <p>СТС, полис, права</p>
@@ -107,7 +146,11 @@
             </div>
 
             <div class="menu-item" onclick="showScreen('issues-screen')">
-                <div class="menu-icon">🔧</div>
+                <div class="menu-icon-svg">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                    </svg>
+                </div>
                 <div class="menu-text">
                     <h3>История поломок</h3>
                     <p>Все проблемы авто</p>
@@ -115,7 +158,12 @@
             </div>
 
             <div class="menu-item" onclick="showScreen('stats-screen')">
-                <div class="menu-icon">💰</div>
+                <div class="menu-icon-svg">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <line x1="12" y1="1" x2="12" y2="23"/>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                    </svg>
+                </div>
                 <div class="menu-text">
                     <h3>Статистика</h3>
                     <p>Расходы и экономия</p>
@@ -167,7 +215,14 @@
         </div>
 
         <div class="tips-card">
-            <h4>💡 Советы по экономии:</h4>
+            <h4>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 8px;">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 16v-4"/>
+                    <path d="M12 8h.01"/>
+                </svg>
+                Советы по экономии:
+            </h4>
             <ul>
                 <li>Плавное ускорение экономит до 10% топлива</li>
                 <li>Правильное давление в шинах снижает расход на 3%</li>
@@ -350,22 +405,43 @@
         <!-- Сетка мини-карточек -->
         <div class="stats-grid">
             <div class="mini-stat-card gradient-primary">
-                <div class="mini-stat-icon">📏</div>
+                <div class="mini-stat-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                        <polyline points="17 6 23 6 23 12"/>
+                    </svg>
+                </div>
                 <div class="mini-stat-value" id="total-distance">1,245 км</div>
                 <div class="mini-stat-label">Пробег за месяц</div>
             </div>
             <div class="mini-stat-card gradient-success">
-                <div class="mini-stat-icon">⛽</div>
+                <div class="mini-stat-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                        <path d="M3 22V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/>
+                        <path d="M3 10h8"/>
+                    </svg>
+                </div>
                 <div class="mini-stat-value" id="total-fuel">89.6 л</div>
                 <div class="mini-stat-label">Израсходовано</div>
             </div>
             <div class="mini-stat-card gradient-warning">
-                <div class="mini-stat-icon">💰</div>
+                <div class="mini-stat-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                        <line x1="12" y1="1" x2="12" y2="23"/>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                    </svg>
+                </div>
                 <div class="mini-stat-value" id="fuel-cost-month">4,928 ₽</div>
                 <div class="mini-stat-label">Затраты</div>
             </div>
             <div class="mini-stat-card gradient-danger">
-                <div class="mini-stat-icon">📊</div>
+                <div class="mini-stat-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                        <line x1="18" y1="20" x2="18" y2="10"/>
+                        <line x1="12" y1="20" x2="12" y2="4"/>
+                        <line x1="6" y1="20" x2="6" y2="14"/>
+                    </svg>
+                </div>
                 <div class="mini-stat-value">+5%</div>
                 <div class="mini-stat-label">Рост расхода</div>
             </div>
@@ -400,83 +476,222 @@
         <div class="header">
             <button class="btn-back" onclick="showScreen('main-screen')">← Назад</button>
             <h2>Напоминания</h2>
+            <p class="subtitle">Не пропустите важные события</p>
         </div>
 
         <div class="reminders-list">
-            <div class="reminder-card urgent">
-                <div class="reminder-icon">⚠️</div>
-                <div class="reminder-content">
-                    <h4>ТО через 500 км</h4>
-                    <p>Текущий пробег: 19,500 км</p>
-                    <span class="reminder-date">До 10 октября</span>
+            <!-- Напоминание 1: ТО (Срочное) -->
+            <div class="premium-reminder-card glass-card urgent-reminder">
+                <div class="reminder-urgency-badge urgent-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="8" x2="12" y2="12"/>
+                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                    <span>Срочно</span>
+                </div>
+
+                <div class="reminder-main">
+                    <div class="reminder-icon-container gradient-danger">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                        </svg>
+                    </div>
+                    <div class="reminder-content-text">
+                        <h4>ТО через 500 км</h4>
+                        <p class="reminder-description">Текущий пробег: 19,500 км</p>
+                    </div>
+                </div>
+
+                <div class="reminder-footer">
+                    <div class="reminder-countdown urgent">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                        <span>До 10 октября</span>
+                    </div>
                 </div>
             </div>
 
-            <div class="reminder-card warning">
-                <div class="reminder-icon">📋</div>
-                <div class="reminder-content">
-                    <h4>ОСАГО истекает</h4>
-                    <p>Продлить до 15 октября</p>
-                    <span class="reminder-date">Осталось 30 дней</span>
+            <!-- Напоминание 2: ОСАГО (Предупреждение) -->
+            <div class="premium-reminder-card glass-card warning-reminder">
+                <div class="reminder-urgency-badge warning-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                    <span>Внимание</span>
+                </div>
+
+                <div class="reminder-main">
+                    <div class="reminder-icon-container gradient-warning">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                            <polyline points="10 9 9 9 8 9"/>
+                        </svg>
+                    </div>
+                    <div class="reminder-content-text">
+                        <h4>ОСАГО истекает</h4>
+                        <p class="reminder-description">Продлить до 15 октября</p>
+                    </div>
+                </div>
+
+                <div class="reminder-footer">
+                    <div class="reminder-countdown warning">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                        <span>Осталось 30 дней</span>
+                    </div>
                 </div>
             </div>
 
-            <div class="reminder-card normal">
-                <div class="reminder-icon">💳</div>
-                <div class="reminder-content">
-                    <h4>Транспортный налог</h4>
-                    <p>Оплатить до 1 декабря</p>
-                    <span class="reminder-date">Осталось 77 дней</span>
+            <!-- Напоминание 3: Транспортный налог (Обычное) -->
+            <div class="premium-reminder-card glass-card normal-reminder">
+                <div class="reminder-urgency-badge normal-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 16v-4"/>
+                        <path d="M12 8h.01"/>
+                    </svg>
+                    <span>Скоро</span>
+                </div>
+
+                <div class="reminder-main">
+                    <div class="reminder-icon-container gradient-info">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                            <line x1="1" y1="10" x2="23" y2="10"/>
+                        </svg>
+                    </div>
+                    <div class="reminder-content-text">
+                        <h4>Транспортный налог</h4>
+                        <p class="reminder-description">Оплатить до 1 декабря</p>
+                    </div>
+                </div>
+
+                <div class="reminder-footer">
+                    <div class="reminder-countdown normal">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                        <span>Осталось 77 дней</span>
+                    </div>
                 </div>
             </div>
 
-            <div class="reminder-card normal">
-                <div class="reminder-icon">🔧</div>
-                <div class="reminder-content">
-                    <h4>Замена масла</h4>
-                    <p>Рекомендуется каждые 10,000 км</p>
-                    <span class="reminder-date">Через 5,000 км</span>
+            <!-- Напоминание 4: Замена масла (Обычное) -->
+            <div class="premium-reminder-card glass-card normal-reminder">
+                <div class="reminder-urgency-badge normal-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 16v-4"/>
+                        <path d="M12 8h.01"/>
+                    </svg>
+                    <span>Скоро</span>
+                </div>
+
+                <div class="reminder-main">
+                    <div class="reminder-icon-container gradient-success">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                        </svg>
+                    </div>
+                    <div class="reminder-content-text">
+                        <h4>Замена масла</h4>
+                        <p class="reminder-description">Рекомендуется каждые 10,000 км</p>
+                    </div>
+                </div>
+
+                <div class="reminder-footer">
+                    <div class="reminder-countdown normal">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                        </svg>
+                        <span>Через 5,000 км</span>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <button class="btn-primary" onclick="addReminder()">+ Добавить напоминание</button>
+        <button class="btn-primary" onclick="addReminder()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Добавить напоминание
+        </button>
     </div>
 
     <!-- Карта сервисов -->
     <div id="map-screen" class="screen">
         <div class="header">
             <button class="btn-back" onclick="showScreen('main-screen')">← Назад</button>
-            <h2>🗺️ Карта сервисов</h2>
+            <h2>Карта сервисов</h2>
+            <p class="subtitle">Найдите ближайшие СТО и заправки</p>
         </div>
 
         <!-- Фильтры -->
         <div class="map-filters">
             <button class="filter-btn active" onclick="filterPlaces('all')" data-type="all">
-                <span>🗺️</span> Все
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="3 11 22 2 13 21 11 13 3 11"/>
+                </svg>
+                Все
             </button>
             <button class="filter-btn" onclick="filterPlaces('gas')" data-type="gas">
-                <span>⛽</span> Заправки
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 22V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/>
+                    <path d="M3 10h8"/>
+                </svg>
+                Заправки
             </button>
             <button class="filter-btn" onclick="filterPlaces('sto')" data-type="sto">
-                <span>🔧</span> СТО
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                </svg>
+                СТО
             </button>
             <button class="filter-btn" onclick="filterPlaces('tire')" data-type="tire">
-                <span>🛞</span> Шиномонтаж
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <circle cx="12" cy="12" r="6"/>
+                    <circle cx="12" cy="12" r="2"/>
+                </svg>
+                Шиномонтаж
             </button>
         </div>
 
         <!-- Карта (используем iframe для простоты) -->
         <div class="map-container" id="map-view">
             <button class="btn-locate" onclick="requestLocation()">
-                <span>📍</span> Моё местоположение
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <circle cx="12" cy="12" r="3"/>
+                </svg>
+                Моё местоположение
             </button>
             <div class="map-placeholder">
-                <div class="map-icon">🗺️</div>
+                <div class="map-icon">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <polygon points="3 11 22 2 13 21 11 13 3 11"/>
+                    </svg>
+                </div>
                 <h3>Разрешите доступ к геолокации</h3>
                 <p>Чтобы показать ближайшие СТО и заправки</p>
                 <button class="btn-primary" onclick="requestLocation()">
-                    📍 Разрешить
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                    Разрешить
                 </button>
             </div>
         </div>
@@ -574,7 +789,14 @@
         </div>
 
         <div class="map-tip">
-            <p>💡 Данные обновляются автоматически на основе вашего местоположения</p>
+            <p>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 6px;">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 16v-4"/>
+                    <path d="M12 8h.01"/>
+                </svg>
+                Данные обновляются автоматически на основе вашего местоположения
+            </p>
         </div>
     </div>
 
@@ -587,42 +809,75 @@
 
         <div class="docs-grid">
             <div class="doc-card">
-                <div class="doc-icon">🚗</div>
+                <div class="doc-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                </div>
                 <h4>СТС</h4>
                 <p>Свидетельство о регистрации</p>
                 <button class="btn-secondary" onclick="uploadDoc('sts')">+ Загрузить</button>
             </div>
 
             <div class="doc-card">
-                <div class="doc-icon">🪪</div>
+                <div class="doc-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                    </svg>
+                </div>
                 <h4>Водительское удостоверение</h4>
                 <p>Права</p>
                 <button class="btn-secondary" onclick="uploadDoc('license')">+ Загрузить</button>
             </div>
 
             <div class="doc-card">
-                <div class="doc-icon">📋</div>
+                <div class="doc-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                    </svg>
+                </div>
                 <h4>ОСАГО</h4>
                 <p>Полис страхования</p>
                 <button class="btn-secondary" onclick="uploadDoc('insurance')">+ Загрузить</button>
             </div>
 
             <div class="doc-card">
-                <div class="doc-icon">📄</div>
+                <div class="doc-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="12" y1="18" x2="12" y2="12"/>
+                        <line x1="9" y1="15" x2="15" y2="15"/>
+                    </svg>
+                </div>
                 <h4>КАСКО</h4>
                 <p>Добровольное страхование</p>
                 <button class="btn-secondary" onclick="uploadDoc('kasko')">+ Загрузить</button>
             </div>
 
             <div class="doc-card">
-                <div class="doc-icon">🔧</div>
+                <div class="doc-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                    </svg>
+                </div>
                 <h4>Сервисная книжка</h4>
                 <p>История обслуживания</p>
                 <button class="btn-secondary" onclick="uploadDoc('service')">+ Загрузить</button>
             </div>
 
             <div class="doc-card">
-                <div class="doc-icon">💳</div>
+                <div class="doc-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                        <line x1="1" y1="10" x2="23" y2="10"/>
+                    </svg>
+                </div>
                 <h4>ПТС</h4>
                 <p>Паспорт транспортного средства</p>
                 <button class="btn-secondary" onclick="uploadDoc('pts')">+ Загрузить</button>
@@ -640,44 +895,151 @@
         <div class="header">
             <button class="btn-back" onclick="showScreen('main-screen')">← Назад</button>
             <h2>История поломок</h2>
+            <p class="subtitle">Все зарегистрированные неисправности</p>
         </div>
 
         <div class="issues-list">
-            <div class="issue-card resolved">
-                <div class="issue-header">
-                    <span class="issue-status">✓ Устранено</span>
-                    <span class="issue-date">10 сентября</span>
+            <!-- Карточка 1: Посторонний шум -->
+            <div class="premium-issue-card glass-card resolved">
+                <div class="issue-status-badge resolved-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    <span>Устранено</span>
                 </div>
-                <h4>Посторонний шум в двигателе</h4>
-                <p><strong>Диагноз:</strong> Износ ремня генератора</p>
-                <p><strong>Решение:</strong> Замена ремня ГРМ</p>
-                <p class="issue-cost">Стоимость: 3,500 ₽</p>
+                
+                <div class="issue-main">
+                    <div class="issue-icon-container gradient-success">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                        </svg>
+                    </div>
+                    <div class="issue-header-text">
+                        <h4>Посторонний шум в двигателе</h4>
+                        <span class="issue-date">10 сентября 2026</span>
+                    </div>
+                </div>
+
+                <div class="issue-details">
+                    <div class="issue-detail-row">
+                        <span class="detail-label">Диагноз</span>
+                        <p class="detail-value">Износ ремня генератора</p>
+                    </div>
+                    <div class="issue-detail-row">
+                        <span class="detail-label">Решение</span>
+                        <p class="detail-value">Замена ремня ГРМ</p>
+                    </div>
+                </div>
+
+                <div class="issue-footer">
+                    <div class="issue-cost">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="23"/>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                        </svg>
+                        <span>3,500 ₽</span>
+                    </div>
+                </div>
             </div>
 
-            <div class="issue-card resolved">
-                <div class="issue-header">
-                    <span class="issue-status">✓ Устранено</span>
-                    <span class="issue-date">28 августа</span>
+            <!-- Карточка 2: Check Engine -->
+            <div class="premium-issue-card glass-card resolved">
+                <div class="issue-status-badge resolved-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    <span>Устранено</span>
                 </div>
-                <h4>Горит Check Engine</h4>
-                <p><strong>Диагноз:</strong> Неисправность датчика кислорода</p>
-                <p><strong>Решение:</strong> Замена лямбда-зонда</p>
-                <p class="issue-cost">Стоимость: 4,200 ₽</p>
+                
+                <div class="issue-main">
+                    <div class="issue-icon-container gradient-warning">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                            <line x1="12" y1="9" x2="12" y2="13"/>
+                            <line x1="12" y1="17" x2="12.01" y2="17"/>
+                        </svg>
+                    </div>
+                    <div class="issue-header-text">
+                        <h4>Горит Check Engine</h4>
+                        <span class="issue-date">28 августа 2026</span>
+                    </div>
+                </div>
+
+                <div class="issue-details">
+                    <div class="issue-detail-row">
+                        <span class="detail-label">Диагноз</span>
+                        <p class="detail-value">Неисправность датчика кислорода</p>
+                    </div>
+                    <div class="issue-detail-row">
+                        <span class="detail-label">Решение</span>
+                        <p class="detail-value">Замена лямбда-зонда</p>
+                    </div>
+                </div>
+
+                <div class="issue-footer">
+                    <div class="issue-cost">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="23"/>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                        </svg>
+                        <span>4,200 ₽</span>
+                    </div>
+                </div>
             </div>
 
-            <div class="issue-card resolved">
-                <div class="issue-header">
-                    <span class="issue-status">✓ Устранено</span>
-                    <span class="issue-date">15 июля</span>
+            <!-- Карточка 3: Вибрация при торможении -->
+            <div class="premium-issue-card glass-card resolved">
+                <div class="issue-status-badge resolved-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    <span>Устранено</span>
                 </div>
-                <h4>Вибрация при торможении</h4>
-                <p><strong>Диагноз:</strong> Деформация тормозных дисков</p>
-                <p><strong>Решение:</strong> Проточка дисков</p>
-                <p class="issue-cost">Стоимость: 2,000 ₽</p>
+                
+                <div class="issue-main">
+                    <div class="issue-icon-container gradient-primary">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <circle cx="12" cy="12" r="6"/>
+                            <circle cx="12" cy="12" r="2"/>
+                        </svg>
+                    </div>
+                    <div class="issue-header-text">
+                        <h4>Вибрация при торможении</h4>
+                        <span class="issue-date">15 июля 2026</span>
+                    </div>
+                </div>
+
+                <div class="issue-details">
+                    <div class="issue-detail-row">
+                        <span class="detail-label">Диагноз</span>
+                        <p class="detail-value">Деформация тормозных дисков</p>
+                    </div>
+                    <div class="issue-detail-row">
+                        <span class="detail-label">Решение</span>
+                        <p class="detail-value">Проточка дисков</p>
+                    </div>
+                </div>
+
+                <div class="issue-footer">
+                    <div class="issue-cost">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="23"/>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                        </svg>
+                        <span>2,000 ₽</span>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <button class="btn-primary" onclick="window.Telegram.WebApp.close()">Добавить новую поломку</button>
+        <button class="btn-primary" onclick="window.Telegram.WebApp.close()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Добавить новую поломку
+        </button>
         <p class="hint">Используйте команду /diagnostics в боте</p>
     </div>
 
@@ -713,7 +1075,12 @@
             <h4>Распределение расходов</h4>
             
             <div class="expense-item">
-                <div class="expense-icon gradient-danger">⛽</div>
+                <div class="expense-icon gradient-danger">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                        <path d="M3 22V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/>
+                        <path d="M3 10h8"/>
+                    </svg>
+                </div>
                 <div class="expense-details">
                     <div class="expense-header">
                         <span class="expense-name">Топливо</span>
@@ -729,7 +1096,11 @@
             </div>
 
             <div class="expense-item">
-                <div class="expense-icon gradient-primary">🔧</div>
+                <div class="expense-icon gradient-primary">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                    </svg>
+                </div>
                 <div class="expense-details">
                     <div class="expense-header">
                         <span class="expense-name">Обслуживание</span>
@@ -745,7 +1116,12 @@
             </div>
 
             <div class="expense-item">
-                <div class="expense-icon gradient-warning">🅿️</div>
+                <div class="expense-icon gradient-warning">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                </div>
                 <div class="expense-details">
                     <div class="expense-header">
                         <span class="expense-name">Парковка</span>
@@ -761,7 +1137,12 @@
             </div>
 
             <div class="expense-item">
-                <div class="expense-icon gradient-success">🚗</div>
+                <div class="expense-icon gradient-success">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                </div>
                 <div class="expense-details">
                     <div class="expense-header">
                         <span class="expense-name">Прочее</span>
@@ -779,7 +1160,13 @@
 
         <!-- Карточка экономии -->
         <div class="savings-card glass-card">
-            <div class="savings-icon">💡</div>
+            <div class="savings-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 16v-4"/>
+                    <path d="M12 8h.01"/>
+                </svg>
+            </div>
             <h4>Потенциальная экономия</h4>
             <p>При снижении расхода топлива на 0.5 л/100км вы сэкономите:</p>
             <div class="savings-amount">~850 ₽/месяц</div>
@@ -797,9 +1184,9 @@
             <h4>ℹ️ Что такое VIN?</h4>
             <p>VIN (Vehicle Identification Number) - уникальный 17-символьный код вашего автомобиля. Найти его можно:</p>
             <ul>
-                <li>📄 В СТС (свидетельство о регистрации)</li>
-                <li>💳 В ПТС (паспорт ТС)</li>
-                <li>🚗 На кузове автомобиля (под капотом, на стойке двери)</li>
+                <li>В СТС (свидетельство о регистрации)</li>
+                <li>В ПТС (паспорт ТС)</li>
+                <li>На кузове автомобиля (под капотом, на стойке двери)</li>
             </ul>
         </div>
 
@@ -817,7 +1204,11 @@
             </div>
 
             <button class="btn-primary" onclick="decodeVINAction()" id="decode-btn" disabled>
-                🔍 Декодировать VIN
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="m21 21-4.35-4.35"/>
+                </svg>
+                Декодировать VIN
             </button>
         </div>
 
@@ -832,7 +1223,7 @@
                 </div>
                 
                 <div class="vin-result-item">
-                    <span class="vin-result-label">🚗 Марка:</span>
+                    <span class="vin-result-label">Марка:</span>
                     <strong id="result-brand">-</strong>
                 </div>
                 
@@ -854,7 +1245,7 @@
 
             <!-- Возможные модели -->
             <div id="models-section" style="display: none;">
-                <h4>📋 Возможные модели:</h4>
+                <h4>Возможные модели:</h4>
                 <div id="models-list" class="models-grid"></div>
             </div>
 
@@ -927,7 +1318,14 @@
         </div>
 
         <div class="tips-card">
-            <h4>💡 Поддерживаемые марки</h4>
+            <h4>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 8px;">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 16v-4"/>
+                    <path d="M12 8h.01"/>
+                </svg>
+                Поддерживаемые марки
+            </h4>
             <p>В базе более 200 производителей из России, Европы, США, Японии, Кореи и Китая. Работает для всех автомобилей, зарегистрированных в России.</p>
         </div>
     </div>
@@ -941,12 +1339,12 @@
 
         <div class="edit-car-form">
             <div class="form-group">
-                <label>🚗 Марка</label>
+                <label>Марка</label>
                 <input type="text" id="edit-brand" placeholder="Toyota">
             </div>
 
             <div class="form-group">
-                <label>📋 Модель</label>
+                <label>Модель</label>
                 <input type="text" id="edit-model" placeholder="Camry">
             </div>
 
@@ -961,7 +1359,7 @@
             </div>
 
             <div class="form-group">
-                <label>⛽ Тип двигателя</label>
+                <label>Тип двигателя</label>
                 <select id="edit-engine-type">
                     <option value="">Выберите тип</option>
                     <option value="Бензин">Бензин</option>
@@ -973,7 +1371,7 @@
             </div>
 
             <div class="form-group">
-                <label>🔧 Объём двигателя (л)</label>
+                <label>Объём двигателя (л)</label>
                 <input type="number" id="edit-engine-volume" placeholder="2.5" step="0.1" min="0">
             </div>
 
@@ -1077,14 +1475,20 @@
     <!-- ЭКРАН: Настройки -->
     <div id="settings-screen" class="screen">
         <div class="header">
-            <h2>⚙️ Настройки</h2>
+            <h2>Настройки</h2>
             <p class="subtitle">Персонализация приложения</p>
         </div>
 
         <div class="settings-list">
             <div class="setting-item">
+                <div class="setting-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                    </svg>
+                </div>
                 <div class="setting-info">
-                    <h3>🔔 Уведомления</h3>
+                    <h3>Уведомления</h3>
                     <p>Напоминания о ТО и страховке</p>
                 </div>
                 <label class="switch">
@@ -1094,8 +1498,13 @@
             </div>
 
             <div class="setting-item">
+                <div class="setting-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                </div>
                 <div class="setting-info">
-                    <h3>🌙 Темная тема</h3>
+                    <h3>Темная тема</h3>
                     <p>Автоматически из Telegram</p>
                 </div>
                 <label class="switch">
@@ -1105,24 +1514,73 @@
             </div>
 
             <div class="setting-item" onclick="showScreen('reminders-screen')">
+                <div class="setting-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                </div>
                 <div class="setting-info">
-                    <h3>⏰ Напоминания</h3>
+                    <h3>Напоминания</h3>
                     <p>Управление напоминаниями</p>
                 </div>
-                <span class="setting-arrow">→</span>
+                <span class="setting-arrow">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"/>
+                    </svg>
+                </span>
             </div>
 
             <div class="setting-item" onclick="showScreen('issues-screen')">
+                <div class="setting-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                    </svg>
+                </div>
                 <div class="setting-info">
-                    <h3>🔧 История поломок</h3>
+                    <h3>История поломок</h3>
                     <p>Все проблемы автомобиля</p>
                 </div>
-                <span class="setting-arrow">→</span>
+                <span class="setting-arrow">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"/>
+                    </svg>
+                </span>
             </div>
         </div>
 
+        <!-- Опасная зона -->
+        <div class="danger-zone">
+            <h4>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                    <line x1="12" y1="9" x2="12" y2="13"/>
+                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+                Опасная зона
+            </h4>
+            <p>Действия в этом разделе необратимы</p>
+            
+            <button class="btn-reset" onclick="confirmResetAllData()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    <line x1="10" y1="11" x2="10" y2="17"/>
+                    <line x1="14" y1="11" x2="14" y2="17"/>
+                </svg>
+                Сбросить все данные
+            </button>
+        </div>
+
         <div class="about-section">
-            <h4>ℹ️ О приложении</h4>
+            <h4>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="16" x2="12" y2="12"/>
+                    <line x1="12" y1="8" x2="12.01" y2="8"/>
+                </svg>
+                О приложении
+            </h4>
             <p>Версия: 1.0.0</p>
             <p>Бот для автовладельцев в России</p>
         </div>

@@ -1158,3 +1158,574 @@
 .tool-card:hover .tool-icon-svg svg {
     stroke: white;
 }
+
+
+/* ============================================
+   DANGER ZONE - Опасная зона в настройках
+   ============================================ */
+
+.danger-zone {
+    margin: 32px 0 24px;
+    padding: 24px;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(220, 38, 38, 0.05) 100%);
+    border: 2px solid rgba(239, 68, 68, 0.3);
+    border-radius: var(--radius-lg);
+}
+
+.danger-zone h4 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--danger);
+    margin-bottom: 8px;
+}
+
+.danger-zone h4 svg {
+    stroke: var(--danger);
+}
+
+.danger-zone p {
+    font-size: 13px;
+    color: var(--text-tertiary);
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.btn-reset {
+    width: 100%;
+    padding: 16px 24px;
+    background: transparent;
+    border: 2px solid var(--danger);
+    border-radius: var(--radius-md);
+    color: var(--danger);
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-reset svg {
+    stroke: var(--danger);
+    transition: var(--transition);
+}
+
+.btn-reset:hover {
+    background: var(--danger);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+}
+
+.btn-reset:hover svg {
+    stroke: white;
+}
+
+.btn-reset:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* Setting Item - иконки в настройках */
+.setting-item {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    padding: 18px 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: var(--transition);
+    margin-bottom: 12px;
+}
+
+.setting-icon {
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.setting-icon svg {
+    stroke: var(--primary);
+}
+
+.setting-arrow svg {
+    stroke: var(--text-tertiary);
+    transition: var(--transition);
+}
+
+.setting-item:hover {
+    background: var(--bg-hover);
+    border-color: var(--primary);
+    transform: translateX(4px);
+}
+
+.setting-item:hover .setting-arrow svg {
+    stroke: var(--primary);
+    transform: translateX(4px);
+}
+
+.setting-item:active {
+    transform: scale(0.98);
+}
+
+/* About Section - иконка в разделе "О приложении" */
+.about-section h4 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 12px;
+}
+
+.about-section h4 svg {
+    stroke: var(--primary);
+}
+
+/* Menu Icon SVG - анимация при hover */
+.menu-icon-svg svg {
+    transition: var(--transition);
+}
+
+.menu-item:hover .menu-icon-svg svg {
+    transform: scale(1.15) rotate(5deg);
+}
+
+/* Мобильные оптимизации */
+@media (max-width: 768px) {
+    .danger-zone {
+        padding: 20px;
+        margin: 24px 0 20px;
+    }
+    
+    .btn-reset {
+        padding: 18px 24px;
+        font-size: 17px;
+    }
+    
+    .setting-item {
+        padding: 16px 18px;
+    }
+    
+    .setting-icon {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+/* ============================================
+   PREMIUM ISSUES SCREEN STYLES
+   ============================================ */
+
+.issues-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.premium-issue-card {
+    position: relative;
+    padding: 20px;
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.premium-issue-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+}
+
+.premium-issue-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.premium-issue-card.resolved::before {
+    background: linear-gradient(90deg, #10b981, #34d399);
+    opacity: 1;
+}
+
+.issue-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    backdrop-filter: blur(10px);
+}
+
+.resolved-badge {
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.active-badge {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.issue-main {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.issue-icon-container {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.issue-header-text {
+    flex: 1;
+}
+
+.issue-header-text h4 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 6px 0;
+    line-height: 1.3;
+}
+
+.issue-date {
+    font-size: 13px;
+    color: var(--text-secondary);
+    opacity: 0.7;
+}
+
+.issue-details {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.issue-detail-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.detail-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.detail-value {
+    font-size: 14px;
+    color: var(--text-primary);
+    line-height: 1.5;
+    margin: 0;
+}
+
+.issue-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.issue-cost {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--accent-color);
+}
+
+.issue-cost svg {
+    opacity: 0.8;
+}
+
+/* ============================================
+   PREMIUM REMINDERS SCREEN STYLES
+   ============================================ */
+
+.reminders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.premium-reminder-card {
+    position: relative;
+    padding: 20px;
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.premium-reminder-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+}
+
+.premium-reminder-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    transition: opacity 0.3s ease;
+}
+
+.urgent-reminder::before {
+    background: linear-gradient(90deg, #ef4444, #f87171);
+}
+
+.warning-reminder::before {
+    background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+
+.normal-reminder::before {
+    background: linear-gradient(90deg, #3b82f6, #60a5fa);
+}
+
+.reminder-urgency-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    backdrop-filter: blur(10px);
+}
+
+.urgent-badge {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.warning-badge {
+    background: rgba(245, 158, 11, 0.15);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.normal-badge {
+    background: rgba(59, 130, 246, 0.15);
+    color: #60a5fa;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.reminder-main {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.reminder-icon-container {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.reminder-content-text {
+    flex: 1;
+}
+
+.reminder-content-text h4 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 6px 0;
+    line-height: 1.3;
+}
+
+.reminder-description {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0;
+}
+
+.reminder-footer {
+    display: flex;
+    justify-content: flex-start;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.reminder-countdown {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+}
+
+.reminder-countdown.urgent {
+    background: rgba(239, 68, 68, 0.1);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.reminder-countdown.warning {
+    background: rgba(245, 158, 11, 0.1);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.reminder-countdown.normal {
+    background: rgba(59, 130, 246, 0.1);
+    color: #60a5fa;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.reminder-countdown svg {
+    opacity: 0.8;
+}
+
+/* Дополнительный градиент для info */
+.gradient-info {
+    background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+}
+
+/* ============================================
+   BUTTON ICON ENHANCEMENTS
+   ============================================ */
+
+.btn-primary svg {
+    vertical-align: middle;
+    margin-right: 6px;
+}
+
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* ============================================
+   MAP SCREEN FILTER BUTTONS SVG
+   ============================================ */
+
+.filter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-btn svg {
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.filter-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+.filter-btn.active {
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    border-color: transparent;
+    color: white;
+}
+
+.filter-btn.active svg {
+    opacity: 1;
+}
+
+.btn-locate {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background: rgba(99, 102, 241, 0.15);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 12px;
+    color: var(--accent-color);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-locate:hover {
+    background: rgba(99, 102, 241, 0.25);
+    transform: translateY(-1px);
+}
+
+.map-icon svg {
+    color: var(--text-secondary);
+    opacity: 0.5;
+}
+
+/* ============================================
+   DOCUMENTS SCREEN SVG ICONS
+   ============================================ */
+
+.doc-icon svg {
+    color: var(--accent-color);
+    opacity: 0.9;
+}
+
+.doc-card:hover .doc-icon svg {
+    opacity: 1;
+    transform: scale(1.1);
+    transition: all 0.3s ease;
+}

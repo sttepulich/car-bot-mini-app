@@ -1093,3 +1093,109 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 });
+
+
+
+// ============================================
+// СБРОС ВСЕХ ДАННЫХ
+// ============================================
+
+function confirmResetAllData() {
+    if (!tg.showConfirm) {
+        // Fallback для старых версий Telegram
+        const confirmed = confirm(
+            '⚠️ ВНИМАНИЕ!\n\n' +
+            'Вы уверены, что хотите удалить ВСЕ данные?\n\n' +
+            'Будут удалены:\n' +
+            '• Все автомобили\n' +
+            '• Все расходы\n' +
+            '• Все записи ТО\n' +
+            '• Все поломки\n\n' +
+            'Это действие НЕОБРАТИМО!'
+        );
+        
+        if (confirmed) {
+            resetAllData();
+        }
+        return;
+    }
+    
+    // Используем нативное подтверждение Telegram
+    tg.showConfirm(
+        '⚠️ ВНИМАНИЕ!\n\n' +
+        'Вы уверены, что хотите удалить ВСЕ данные?\n\n' +
+        'Будут удалены:\n' +
+        '• Все автомобили\n' +
+        '• Все расходы\n' +
+        '• Все записи ТО\n' +
+        '• Все поломки\n\n' +
+        'Это действие НЕОБРАТИМО!',
+        (confirmed) => {
+            if (confirmed) {
+                resetAllData();
+            }
+        }
+    );
+}
+
+function resetAllData() {
+    console.log('🗑️ Сброс всех данных...');
+    
+    // Показываем индикатор загрузки
+    if (tg.MainButton) {
+        tg.MainButton.setText('Удаление данных...');
+        tg.MainButton.showProgress();
+        tg.MainButton.show();
+    }
+    
+    // Отправляем команду на сброс в бот
+    sendDataToBot('reset_all_data', {
+        timestamp: Date.now(),
+        confirmed: true
+    });
+    
+    // Очищаем localStorage
+    localStorage.removeItem('garageData');
+    localStorage.removeItem('calculations');
+    
+    // Сбрасываем текущие данные
+    garageData = null;
+    currentCar = null;
+    
+    // Обновляем отображение
+    updateGarageDisplay([]);
+    
+    // Показываем уведомление
+    if (tg.showPopup) {
+        setTimeout(() => {
+            if (tg.MainButton) {
+                tg.MainButton.hideProgress();
+                tg.MainButton.hide();
+            }
+            
+            tg.showPopup({
+                title: '✅ Готово!',
+                message: 'Все данные удалены.\n\nВы можете начать заново, добавив новый автомобиль.',
+                buttons: [{id: 'ok', type: 'ok'}]
+            }, () => {
+                // Возвращаемся на главный экран
+                navigateTo('main-screen');
+            });
+        }, 1500);
+    } else {
+        // Fallback
+        setTimeout(() => {
+            if (tg.MainButton) {
+                tg.MainButton.hideProgress();
+                tg.MainButton.hide();
+            }
+            alert('✅ Все данные удалены!\n\nВы можете начать заново.');
+            navigateTo('main-screen');
+        }, 1500);
+    }
+    
+    // Вибрация
+    if (tg.HapticFeedback) {
+        tg.HapticFeedback.notificationOccurred('success');
+    }
+}

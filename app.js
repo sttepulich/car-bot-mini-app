@@ -1,969 +1,1095 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Мой гараж</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="styles-premium.css">
-    <!-- Lucide Icons CDN -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-</head>
-<body>
-    <!-- Главное меню -->
-    <div id="main-screen" class="screen active">
+// Telegram Web App API
+let tg = window.Telegram.WebApp;
+tg.expand();
+
+// Применяем тему Telegram
+document.documentElement.style.setProperty('--tg-theme-bg-color', tg.themeParams.bg_color || '#ffffff');
+document.documentElement.style.setProperty('--tg-theme-text-color', tg.themeParams.text_color || '#000000');
+document.documentElement.style.setProperty('--tg-theme-hint-color', tg.themeParams.hint_color || '#999999');
+document.documentElement.style.setProperty('--tg-theme-link-color', tg.themeParams.link_color || '#2481cc');
+document.documentElement.style.setProperty('--tg-theme-button-color', tg.themeParams.button_color || '#2481cc');
+document.documentElement.style.setProperty('--tg-theme-secondary-bg-color', tg.themeParams.secondary_bg_color || '#f4f4f5');
+
+// Данные пользователя и гаража
+let userData = null;
+let garageData = null;
+let currentCar = null;
+
+// Инициализация
+document.addEventListener('DOMContentLoaded', () => {
+    loadGarageData();
+    loadLocalData();
+});
+
+// 🔄 СИНХРОНИЗАЦИЯ: Загрузка данных гаража из Telegram
+function loadGarageData() {
+    try {
+        const initData = tg.initDataUnsafe;
         
-        <!-- ПУСТОЕ СОСТОЯНИЕ (если нет авто) -->
-        <div class="car-info empty-state" id="empty-garage" style="display: none;">
-            <div class="empty-card">
-                <div class="empty-icon">
-                    <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <path d="M5 17h14v-2H5v2zm7-10.5l-3.5 2.5H15l-3-2.5z"/>
-                        <path d="M19 9l1.25-2.75L23 5l-2.75-1.25L19 1l-1.25 2.75L15 5l2.75 1.25z"/>
-                        <path d="M9 11.5l-1.25-2.75L5 7.5l2.75-1.25L9 3.5l1.25 2.75L13 7.5l-2.75 1.25z"/>
-                    </svg>
-                </div>
-                <h3>Добавьте первый автомобиль</h3>
-                <p>Начните управлять вашим гаражом, добавив автомобиль по VIN номеру или вручную</p>
-                <button class="btn-primary" onclick="showScreen('vin-screen')">
-                    Добавить автомобиль
-                </button>
-            </div>
-        </div>
+        // Получаем telegram_id пользователя
+        if (initData && initData.user) {
+            userData = {
+                id: initData.user.id,
+                first_name: initData.user.first_name,
+                username: initData.user.username
+            };
+            
+            console.log('👤 Пользователь:', userData);
+        }
         
-        <div class="header">
-            <h1>🚗 Мой гараж</h1>
-            <p class="subtitle">Управление автомобилями</p>
-        </div>
-
-        <div class="car-info" id="car-info">
-            <div class="car-card">
-                <div class="car-icon">🚙</div>
-                <div class="car-details">
-                    <h3 id="car-name">Загрузка...</h3>
-                    <p id="car-specs">-</p>
-                </div>
-                <button class="btn-icon" onclick="showScreen('edit-car-screen')">📝</button>
-            </div>
-        </div>
-
-        <div class="quick-action">
-            <button class="btn-primary-outline" onclick="showScreen('vin-screen')">
-                ⚡ Добавить авто по VIN
-            </button>
-        </div>
-
-        <div class="menu-grid">
-            <div class="menu-item" onclick="showScreen('fuel-screen')">
-                <div class="menu-icon">⛽</div>
-                <div class="menu-text">
-                    <h3>Калькулятор топлива</h3>
-                    <p>Расчет расхода и стоимости</p>
-                </div>
-            </div>
-
-            <div class="menu-item" onclick="showScreen('tire-screen')">
-                <div class="menu-icon">🛞</div>
-                <div class="menu-text">
-                    <h3>Калькулятор шин</h3>
-                    <p>Подбор размеров</p>
-                </div>
-            </div>
-
-            <div class="menu-item" onclick="showScreen('consumption-screen')">
-                <div class="menu-icon">📊</div>
-                <div class="menu-text">
-                    <h3>Анализ расхода</h3>
-                    <p>Статистика потребления</p>
-                </div>
-            </div>
-
-            <div class="menu-item" onclick="showScreen('reminders-screen')">
-                <div class="menu-icon">⏰</div>
-                <div class="menu-text">
-                    <h3>Напоминания</h3>
-                    <p>ТО, страховка, налоги</p>
-                </div>
-            </div>
-
-            <div class="menu-item" onclick="showScreen('map-screen')">
-                <div class="menu-icon">🗺️</div>
-                <div class="menu-text">
-                    <h3>Карта сервисов</h3>
-                    <p>Ближайшие СТО и заправки</p>
-                </div>
-            </div>
-
-            <div class="menu-item" onclick="showScreen('docs-screen')">
-                <div class="menu-icon">📄</div>
-                <div class="menu-text">
-                    <h3>Документы</h3>
-                    <p>СТС, полис, права</p>
-                </div>
-            </div>
-
-            <div class="menu-item" onclick="showScreen('issues-screen')">
-                <div class="menu-icon">🔧</div>
-                <div class="menu-text">
-                    <h3>История поломок</h3>
-                    <p>Все проблемы авто</p>
-                </div>
-            </div>
-
-            <div class="menu-item" onclick="showScreen('stats-screen')">
-                <div class="menu-icon">💰</div>
-                <div class="menu-text">
-                    <h3>Статистика</h3>
-                    <p>Расходы и экономия</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Калькулятор топлива -->
-    <div id="fuel-screen" class="screen">
-        <div class="header">
-            <button class="btn-back" onclick="showScreen('main-screen')">← Назад</button>
-            <h2>Калькулятор топлива</h2>
-        </div>
-
-        <div class="calculator-form">
-            <div class="form-group">
-                <label>Расстояние (км)</label>
-                <input type="number" id="fuel-distance" placeholder="100" value="100">
-            </div>
-
-            <div class="form-group">
-                <label>Расход (л/100км)</label>
-                <input type="number" id="fuel-consumption" placeholder="7.5" step="0.1" value="7.5">
-            </div>
-
-            <div class="form-group">
-                <label>Цена топлива (₽/л)</label>
-                <input type="number" id="fuel-price" placeholder="55" value="55">
-            </div>
-
-            <button class="btn-primary" onclick="calculateFuel()">Рассчитать</button>
-        </div>
-
-        <div class="result-card" id="fuel-result" style="display: none;">
-            <h3>Результаты:</h3>
-            <div class="result-item">
-                <span>Потребуется топлива:</span>
-                <strong id="fuel-needed">-</strong>
-            </div>
-            <div class="result-item">
-                <span>Стоимость поездки:</span>
-                <strong id="fuel-cost">-</strong>
-            </div>
-            <div class="result-item">
-                <span>Стоимость 1 км:</span>
-                <strong id="fuel-cost-per-km">-</strong>
-            </div>
-        </div>
-
-        <div class="tips-card">
-            <h4>💡 Советы по экономии:</h4>
-            <ul>
-                <li>Плавное ускорение экономит до 10% топлива</li>
-                <li>Правильное давление в шинах снижает расход на 3%</li>
-                <li>Выключайте двигатель при остановке >1 минуты</li>
-                <li>Используйте круиз-контроль на трассе</li>
-            </ul>
-        </div>
-    </div>
-
-    <!-- Калькулятор шин -->
-    <div id="tire-screen" class="screen">
-        <div class="header">
-            <button class="btn-back" onclick="showScreen('main-screen')">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="19" y1="12" x2="5" y2="12"/>
-                    <polyline points="12 19 5 12 12 5"/>
-                </svg>
-                Назад
-            </button>
-            <h2>Калькулятор шин</h2>
-        </div>
-
-        <div class="calculator-form">
-            <!-- Текущие шины -->
-            <div class="tire-section glass-card">
-                <div class="tire-section-header">
-                    <div class="tire-icon">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <circle cx="12" cy="12" r="10"/>
-                            <circle cx="12" cy="12" r="6"/>
-                        </svg>
-                    </div>
-                    <h3>Текущие шины</h3>
-                </div>
-                <div class="tire-input-group">
-                    <input type="number" id="tire1-width" placeholder="195" class="tire-input">
-                    <span class="tire-separator">/</span>
-                    <input type="number" id="tire1-profile" placeholder="65" class="tire-input">
-                    <span class="tire-separator">R</span>
-                    <input type="number" id="tire1-diameter" placeholder="15" class="tire-input">
-                </div>
-            </div>
-
-            <!-- Новые шины -->
-            <div class="tire-section glass-card">
-                <div class="tire-section-header">
-                    <div class="tire-icon">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <circle cx="12" cy="12" r="10"/>
-                            <circle cx="12" cy="12" r="6"/>
-                            <circle cx="12" cy="12" r="2"/>
-                        </svg>
-                    </div>
-                    <h3>Новые шины</h3>
-                </div>
-                <div class="tire-input-group">
-                    <input type="number" id="tire2-width" placeholder="205" class="tire-input">
-                    <span class="tire-separator">/</span>
-                    <input type="number" id="tire2-profile" placeholder="55" class="tire-input">
-                    <span class="tire-separator">R</span>
-                    <input type="number" id="tire2-diameter" placeholder="16" class="tire-input">
-                </div>
-            </div>
-
-            <button class="btn-primary" onclick="calculateTires()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                </svg>
-                Сравнить размеры
-            </button>
-        </div>
-
-        <!-- Результат сравнения -->
-        <div class="result-card glass-card" id="tire-result" style="display: none;">
-            <h3>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="20 6 9 17 4 12"/>
-                </svg>
-                Результаты сравнения
-            </h3>
+        // Пытаемся загрузить данные гаража из start_param или localStorage
+        let carsFromParam = null;
+        
+        if (initData && initData.start_param) {
+            try {
+                carsFromParam = JSON.parse(atob(initData.start_param));
+                console.log('📦 Данные из start_param:', carsFromParam);
+            } catch (e) {
+                console.log('⚠️ Не удалось распарсить start_param');
+            }
+        }
+        
+        // Загружаем из localStorage или используем данные из параметра
+        const cachedGarage = localStorage.getItem('garageData');
+        if (cachedGarage) {
+            garageData = JSON.parse(cachedGarage);
+            console.log('💾 Данные из localStorage:', garageData);
+        } else if (carsFromParam) {
+            garageData = carsFromParam;
+            localStorage.setItem('garageData', JSON.stringify(garageData));
+        }
+        
+        // Если есть данные - отображаем
+        if (garageData && garageData.cars && garageData.cars.length > 0) {
+            updateGarageDisplay(garageData.cars);
+            currentCar = garageData.cars[0]; // Первый автомобиль по умолчанию
+        } else {
+            // Показываем пустое состояние
+            updateGarageDisplay([]);
             
-            <div class="tire-comparison">
-                <div class="tire-col">
-                    <div class="tire-col-icon current">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <circle cx="12" cy="12" r="10"/>
-                            <circle cx="12" cy="12" r="6"/>
-                        </svg>
-                    </div>
-                    <h4>Текущие</h4>
-                    <div class="tire-stat">
-                        <span>Диаметр:</span>
-                        <strong id="tire1-total-diameter">-</strong>
-                    </div>
-                    <div class="tire-stat">
-                        <span>Высота:</span>
-                        <strong id="tire1-height">-</strong>
-                    </div>
-                </div>
-                
-                <div class="comparison-arrow">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="5" y1="12" x2="19" y2="12"/>
-                        <polyline points="12 5 19 12 12 19"/>
-                    </svg>
-                </div>
-                
-                <div class="tire-col">
-                    <div class="tire-col-icon new">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <circle cx="12" cy="12" r="10"/>
-                            <circle cx="12" cy="12" r="6"/>
-                            <circle cx="12" cy="12" r="2"/>
-                        </svg>
-                    </div>
-                    <h4>Новые</h4>
-                    <div class="tire-stat">
-                        <span>Диаметр:</span>
-                        <strong id="tire2-total-diameter">-</strong>
-                    </div>
-                    <div class="tire-stat">
-                        <span>Высота:</span>
-                        <strong id="tire2-height">-</strong>
-                    </div>
-                </div>
-            </div>
+            // Демо-данные для тестирования (закомментировано)
+            // loadDemoData();
+        }
+        
+    } catch (e) {
+        console.error('❌ Ошибка загрузки данных гаража:', e);
+        // При ошибке показываем пустое состояние вместо демо-данных
+        updateGarageDisplay([]);
+    }
+}
 
-            <!-- Разница -->
-            <div class="tire-difference">
-                <div class="difference-item">
-                    <div class="difference-icon">📏</div>
-                    <div class="difference-content">
-                        <span>Разница в диаметре</span>
-                        <strong id="tire-diff">-</strong>
-                    </div>
-                </div>
-                <div class="difference-item">
-                    <div class="difference-icon">⚡</div>
-                    <div class="difference-content">
-                        <span>Изменение скорости</span>
-                        <strong id="speed-diff">-</strong>
-                    </div>
-                </div>
-            </div>
+// Демо-данные (если нет реальных)
+function loadDemoData() {
+    console.log('📝 Загрузка демо-данных');
+    garageData = {
+        user: userData || { first_name: 'Пользователь' },
+        cars: [
+            {
+                id: 1,
+                brand: 'Toyota',
+                model: 'Camry',
+                year: 2020,
+                engine_type: 'Бензин',
+                engine_volume: 2.5,
+                current_mileage: 45000,
+                license_plate: 'А123БВ777'
+            }
+        ]
+    };
+    currentCar = garageData.cars[0];
+    updateGarageDisplay(garageData.cars);
+}
 
-            <!-- Рекомендация -->
-            <div class="tire-recommendation-card" id="tire-recommendation-card">
-                <p id="tire-recommendation"></p>
-            </div>
-        </div>
-    </div>
+// 🔄 Обновление отображения гаража
+function updateGarageDisplay(cars) {
+    const carInfo = document.getElementById('car-info');
+    const emptyState = document.getElementById('empty-garage');
+    
+    if (!cars || cars.length === 0) {
+        // Показываем пустое состояние
+        if (carInfo) carInfo.style.display = 'none';
+        if (emptyState) emptyState.style.display = 'block';
+        console.log('📭 Гараж пуст - показываем заглушку');
+        return;
+    }
+    
+    // Скрываем пустое состояние, показываем авто
+    if (carInfo) carInfo.style.display = 'block';
+    if (emptyState) emptyState.style.display = 'none';
+    
+    // Показываем первый автомобиль
+    const car = cars[0];
+    updateCarInfo(car);
+    
+    // Можно добавить список всех авто позже
+    console.log(`🚗 Загружено автомобилей: ${cars.length}`);
+}
 
-    <!-- Анализ расхода -->
-    <div id="consumption-screen" class="screen">
-        <div class="header">
-            <button class="btn-back" onclick="showScreen('main-screen')">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="19" y1="12" x2="5" y2="12"/>
-                    <polyline points="12 19 5 12 12 5"/>
-                </svg>
-                Назад
-            </button>
-            <h2>Анализ расхода</h2>
-        </div>
+// Обновление информации об автомобиле
+function updateCarInfo(car) {
+    if (!car) return;
+    
+    const carName = `${car.brand} ${car.model}`;
+    const carYear = car.year ? `(${car.year})` : '';
+    const engineInfo = car.engine_type || '';
+    const volumeInfo = car.engine_volume ? `${car.engine_volume}л` : '';
+    const mileageInfo = car.current_mileage ? `${car.current_mileage.toLocaleString()} км` : '0 км';
+    
+    document.getElementById('car-name').textContent = `${carName} ${carYear}`;
+    
+    let specsText = '';
+    if (engineInfo) specsText += engineInfo;
+    if (volumeInfo) specsText += (specsText ? ', ' : '') + volumeInfo;
+    if (mileageInfo) specsText += (specsText ? ' • ' : '') + mileageInfo;
+    
+    document.getElementById('car-specs').textContent = specsText || 'Информация не указана';
+}
 
-        <!-- Большая карточка с основной статистикой -->
-        <div class="hero-stat-card">
-            <div class="hero-stat-icon">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <line x1="18" y1="20" x2="18" y2="10"/>
-                    <line x1="12" y1="20" x2="12" y2="4"/>
-                    <line x1="6" y1="20" x2="6" y2="14"/>
-                </svg>
-            </div>
-            <h3>Средний расход</h3>
-            <div class="hero-stat-value" id="avg-consumption">7.2 л</div>
-            <p>на 100 км за последний месяц</p>
-        </div>
+// 🔄 Синхронизация: запросить обновление данных гаража
+function requestGarageSync() {
+    console.log('🔄 Запрос синхронизации гаража...');
+    sendDataToBot('request_garage_sync', {
+        user_id: userData ? userData.id : null
+    });
+}
 
-        <!-- Сетка мини-карточек -->
-        <div class="stats-grid">
-            <div class="mini-stat-card gradient-primary">
-                <div class="mini-stat-icon">📏</div>
-                <div class="mini-stat-value" id="total-distance">1,245 км</div>
-                <div class="mini-stat-label">Пробег за месяц</div>
-            </div>
-            <div class="mini-stat-card gradient-success">
-                <div class="mini-stat-icon">⛽</div>
-                <div class="mini-stat-value" id="total-fuel">89.6 л</div>
-                <div class="mini-stat-label">Израсходовано</div>
-            </div>
-            <div class="mini-stat-card gradient-warning">
-                <div class="mini-stat-icon">💰</div>
-                <div class="mini-stat-value" id="fuel-cost-month">4,928 ₽</div>
-                <div class="mini-stat-label">Затраты</div>
-            </div>
-            <div class="mini-stat-card gradient-danger">
-                <div class="mini-stat-icon">📊</div>
-                <div class="mini-stat-value">+5%</div>
-                <div class="mini-stat-label">Рост расхода</div>
-            </div>
-        </div>
+// 🔄 Обработка обновленных данных гаража
+function handleGarageUpdate(newGarageData) {
+    console.log('✅ Получены обновленные данные гаража:', newGarageData);
+    
+    garageData = newGarageData;
+    localStorage.setItem('garageData', JSON.stringify(garageData));
+    
+    if (garageData.cars && garageData.cars.length > 0) {
+        updateGarageDisplay(garageData.cars);
+        
+        tg.showPopup({
+            title: '✅ Синхронизировано!',
+            message: `Загружено автомобилей: ${garageData.cars.length}`,
+            buttons: [{id: 'ok', type: 'ok'}]
+        });
+    }
+}
 
-        <!-- Карточка тренда -->
-        <div class="trend-card glass-card">
-            <div class="trend-header">
-                <h4>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-                    </svg>
-                    Тенденция
-                </h4>
-                <span class="trend-badge stable">Стабильно</span>
-            </div>
-            <p id="trend-text">Ваш расход топлива стабилен. Продолжайте в том же духе!</p>
-            <div class="trend-chart">
-                <div class="chart-bar" style="height: 60%"></div>
-                <div class="chart-bar" style="height: 75%"></div>
-                <div class="chart-bar" style="height: 70%"></div>
-                <div class="chart-bar" style="height: 80%"></div>
-                <div class="chart-bar" style="height: 65%"></div>
-                <div class="chart-bar" style="height: 70%"></div>
-                <div class="chart-bar" style="height: 72%"></div>
-            </div>
-        </div>
-    </div>
+// Переключение экранов
+function showScreen(screenId) {
+    document.querySelectorAll('.screen').forEach(screen => {
+        screen.classList.remove('active');
+    });
+    document.getElementById(screenId).classList.add('active');
+    
+    // Обновляем данные при переходе на экран
+    if (screenId === 'reminders-screen') {
+        requestRemindersFromBot();
+    }
+    
+    // Вибрация при переходе
+    if (tg.HapticFeedback) {
+        tg.HapticFeedback.impactOccurred('light');
+    }
+}
 
-    <!-- Напоминания -->
-    <div id="reminders-screen" class="screen">
-        <div class="header">
-            <button class="btn-back" onclick="showScreen('main-screen')">← Назад</button>
-            <h2>Напоминания</h2>
-        </div>
+// Выбор автомобиля
+function selectCar() {
+    tg.showAlert('Выберите автомобиль в боте через команду /garage');
+}
 
-        <div class="reminders-list">
-            <div class="reminder-card urgent">
-                <div class="reminder-icon">⚠️</div>
-                <div class="reminder-content">
-                    <h4>ТО через 500 км</h4>
-                    <p>Текущий пробег: 19,500 км</p>
-                    <span class="reminder-date">До 10 октября</span>
-                </div>
-            </div>
+// ========== КАЛЬКУЛЯТОР ТОПЛИВА ==========
+function calculateFuel() {
+    const distance = parseFloat(document.getElementById('fuel-distance').value);
+    const consumption = parseFloat(document.getElementById('fuel-consumption').value);
+    const price = parseFloat(document.getElementById('fuel-price').value);
 
-            <div class="reminder-card warning">
-                <div class="reminder-icon">📋</div>
-                <div class="reminder-content">
-                    <h4>ОСАГО истекает</h4>
-                    <p>Продлить до 15 октября</p>
-                    <span class="reminder-date">Осталось 30 дней</span>
-                </div>
-            </div>
+    if (!distance || !consumption || !price) {
+        tg.showAlert('Заполните все поля!');
+        return;
+    }
 
-            <div class="reminder-card normal">
-                <div class="reminder-icon">💳</div>
-                <div class="reminder-content">
-                    <h4>Транспортный налог</h4>
-                    <p>Оплатить до 1 декабря</p>
-                    <span class="reminder-date">Осталось 77 дней</span>
-                </div>
-            </div>
+    const fuelNeeded = (distance * consumption / 100).toFixed(2);
+    const totalCost = (fuelNeeded * price).toFixed(2);
+    const costPerKm = (totalCost / distance).toFixed(2);
 
-            <div class="reminder-card normal">
-                <div class="reminder-icon">🔧</div>
-                <div class="reminder-content">
-                    <h4>Замена масла</h4>
-                    <p>Рекомендуется каждые 10,000 км</p>
-                    <span class="reminder-date">Через 5,000 км</span>
-                </div>
-            </div>
-        </div>
+    document.getElementById('fuel-needed').textContent = `${fuelNeeded} л`;
+    document.getElementById('fuel-cost').textContent = `${totalCost} ₽`;
+    document.getElementById('fuel-cost-per-km').textContent = `${costPerKm} ₽/км`;
 
-        <button class="btn-primary" onclick="addReminder()">+ Добавить напоминание</button>
-    </div>
+    document.getElementById('fuel-result').style.display = 'block';
 
-    <!-- Карта сервисов -->
-    <div id="map-screen" class="screen">
-        <div class="header">
-            <button class="btn-back" onclick="showScreen('main-screen')">← Назад</button>
-            <h2>🗺️ Карта сервисов</h2>
-        </div>
+    // Сохраняем расчет локально
+    saveCalculation('fuel', { distance, consumption, price, fuelNeeded, totalCost });
+    
+    // 🔄 СИНХРОНИЗАЦИЯ: Предлагаем сохранить расход
+    showSyncButton('fuel', { distance, totalCost });
 
-        <!-- Фильтры -->
-        <div class="map-filters">
-            <button class="filter-btn active" onclick="filterPlaces('all')" data-type="all">
-                <span>🗺️</span> Все
-            </button>
-            <button class="filter-btn" onclick="filterPlaces('gas')" data-type="gas">
-                <span>⛽</span> Заправки
-            </button>
-            <button class="filter-btn" onclick="filterPlaces('sto')" data-type="sto">
-                <span>🔧</span> СТО
-            </button>
-            <button class="filter-btn" onclick="filterPlaces('tire')" data-type="tire">
-                <span>🛞</span> Шиномонтаж
-            </button>
-        </div>
+    if (tg.HapticFeedback) {
+        tg.HapticFeedback.notificationOccurred('success');
+    }
+}
 
-        <!-- Карта (используем iframe для простоты) -->
-        <div class="map-container" id="map-view">
-            <button class="btn-locate" onclick="requestLocation()">
-                <span>📍</span> Моё местоположение
-            </button>
-            <div class="map-placeholder">
-                <div class="map-icon">🗺️</div>
-                <h3>Разрешите доступ к геолокации</h3>
-                <p>Чтобы показать ближайшие СТО и заправки</p>
-                <button class="btn-primary" onclick="requestLocation()">
-                    📍 Разрешить
-                </button>
-            </div>
-        </div>
+// Показать кнопку синхронизации
+function showSyncButton(type, data) {
+    const resultDiv = document.getElementById('fuel-result');
+    
+    // Удаляем старую кнопку если есть
+    const oldBtn = resultDiv.querySelector('.sync-btn');
+    if (oldBtn) oldBtn.remove();
+    
+    // Создаем новую кнопку
+    const syncBtn = document.createElement('button');
+    syncBtn.className = 'btn-primary sync-btn';
+    syncBtn.textContent = '💾 Сохранить в расходы';
+    syncBtn.onclick = () => saveFuelExpense(data);
+    
+    resultDiv.appendChild(syncBtn);
+}
 
-        <!-- Список мест -->
-        <div class="places-list" id="places-list">
-            <div class="places-header">
-                <h3>Ближайшие сервисы</h3>
-                <span class="places-count" id="places-count">...</span>
-            </div>
+// Сохранить расход на топливо
+function saveFuelExpense(data) {
+    sendDataToBot('save_fuel_calculation', {
+        distance: data.distance,
+        totalCost: data.totalCost,
+        car_id: currentCar ? currentCar.id : null
+    });
+    
+    tg.showPopup({
+        title: '✅ Готово!',
+        message: 'Расход сохранен в статистику',
+        buttons: [{id: 'ok', type: 'ok'}]
+    });
+}
 
-            <!-- Заправки -->
-            <div class="place-card" data-type="gas" data-distance="1.2">
-                <div class="place-badge gas">⛽</div>
-                <div class="place-content">
-                    <h4>Лукойл</h4>
-                    <p class="place-address">📍 ул. Ленина, 45</p>
-                    <p class="place-info">⭐ 4.5 • AI-95: 55₽/л • AI-98: 62₽/л</p>
-                    <p class="place-distance">🚗 1.2 км • ~3 мин</p>
-                </div>
-                <button class="btn-route" onclick="openRoute('55.751244,37.618423')">→</button>
-            </div>
+// ========== КАЛЬКУЛЯТОР ШИН ==========
+function calculateTires() {
+    const tire1Width = parseFloat(document.getElementById('tire1-width').value);
+    const tire1Profile = parseFloat(document.getElementById('tire1-profile').value);
+    const tire1Diameter = parseFloat(document.getElementById('tire1-diameter').value);
 
-            <div class="place-card" data-type="gas" data-distance="1.8">
-                <div class="place-badge gas">⛽</div>
-                <div class="place-content">
-                    <h4>Газпромнефть</h4>
-                    <p class="place-address">📍 пр. Мира, 120</p>
-                    <p class="place-info">⭐ 4.7 • AI-95: 54₽/л • AI-100: 70₽/л</p>
-                    <p class="place-distance">🚗 1.8 км • ~5 мин</p>
-                </div>
-                <button class="btn-route" onclick="openRoute('55.751244,37.618423')">→</button>
-            </div>
+    const tire2Width = parseFloat(document.getElementById('tire2-width').value);
+    const tire2Profile = parseFloat(document.getElementById('tire2-profile').value);
+    const tire2Diameter = parseFloat(document.getElementById('tire2-diameter').value);
 
-            <div class="place-card" data-type="gas" data-distance="2.3">
-                <div class="place-badge gas">⛽</div>
-                <div class="place-content">
-                    <h4>Роснефть</h4>
-                    <p class="place-address">📍 Садовое кольцо, 15</p>
-                    <p class="place-info">⭐ 4.3 • AI-95: 56₽/л • Diesel: 58₽/л</p>
-                    <p class="place-distance">🚗 2.3 км • ~6 мин</p>
-                </div>
-                <button class="btn-route" onclick="openRoute('55.751244,37.618423')">→</button>
-            </div>
+    if (!tire1Width || !tire1Profile || !tire1Diameter || !tire2Width || !tire2Profile || !tire2Diameter) {
+        tg.showAlert('Заполните все размеры шин!');
+        return;
+    }
 
-            <!-- СТО -->
-            <div class="place-card" data-type="sto" data-distance="2.8">
-                <div class="place-badge sto">🔧</div>
-                <div class="place-content">
-                    <h4>АвтоМастер</h4>
-                    <p class="place-address">📍 пр. Победы, 12</p>
-                    <p class="place-info">⭐ 4.8 • Ремонт, диагностика, ТО</p>
-                    <p class="place-time">🕐 Пн-Пт 9:00-20:00, Сб 10:00-18:00</p>
-                    <p class="place-distance">🚗 2.8 км • ~8 мин</p>
-                </div>
-                <button class="btn-route" onclick="openRoute('55.751244,37.618423')">→</button>
-            </div>
+    // Расчет диаметра шины: Диаметр = (Ширина × Профиль / 100 × 2) + (Диск × 25.4)
+    const tire1Height = (tire1Width * tire1Profile / 100).toFixed(1);
+    const tire1TotalDiameter = (tire1Width * tire1Profile / 100 * 2 + tire1Diameter * 25.4).toFixed(1);
 
-            <div class="place-card" data-type="sto" data-distance="3.2">
-                <div class="place-badge sto">🔧</div>
-                <div class="place-content">
-                    <h4>ТехЦентр Премиум</h4>
-                    <p class="place-address">📍 ул. Промышленная, 45</p>
-                    <p class="place-info">⭐ 4.9 • Официальный дилер, гарантия</p>
-                    <p class="place-time">🕐 Пн-Сб 8:00-21:00</p>
-                    <p class="place-distance">🚗 3.2 км • ~10 мин</p>
-                </div>
-                <button class="btn-route" onclick="openRoute('55.751244,37.618423')">→</button>
-            </div>
+    const tire2Height = (tire2Width * tire2Profile / 100).toFixed(1);
+    const tire2TotalDiameter = (tire2Width * tire2Profile / 100 * 2 + tire2Diameter * 25.4).toFixed(1);
 
-            <!-- Шиномонтаж -->
-            <div class="place-card" data-type="tire" data-distance="1.5">
-                <div class="place-badge tire">🛞</div>
-                <div class="place-content">
-                    <h4>Шиномонтаж 24/7</h4>
-                    <p class="place-address">📍 ул. Гагарина, 78</p>
-                    <p class="place-info">⭐ 4.2 • Круглосуточно, мобильный выезд</p>
-                    <p class="place-time">🕐 24/7</p>
-                    <p class="place-distance">🚗 1.5 км • ~4 мин</p>
-                </div>
-                <button class="btn-route" onclick="openRoute('55.751244,37.618423')">→</button>
-            </div>
+    const diameterDiff = (tire2TotalDiameter - tire1TotalDiameter).toFixed(1);
+    const percentDiff = ((diameterDiff / tire1TotalDiameter) * 100).toFixed(2);
+    const speedDiff = Math.abs(parseFloat(percentDiff)).toFixed(1);
 
-            <div class="place-card" data-type="tire" data-distance="3.5">
-                <div class="place-badge tire">🛞</div>
-                <div class="place-content">
-                    <h4>Шинный Центр</h4>
-                    <p class="place-address">📍 Московское шоссе, 12</p>
-                    <p class="place-info">⭐ 4.6 • Продажа, замена, хранение</p>
-                    <p class="place-time">🕐 Пн-Вс 9:00-22:00</p>
-                    <p class="place-distance">🚗 3.5 км • ~11 мин</p>
-                </div>
-                <button class="btn-route" onclick="openRoute('55.751244,37.618423')">→</button>
-            </div>
-        </div>
+    document.getElementById('tire1-total-diameter').textContent = `${tire1TotalDiameter} мм`;
+    document.getElementById('tire1-height').textContent = `${tire1Height} мм`;
+    document.getElementById('tire2-total-diameter').textContent = `${tire2TotalDiameter} мм`;
+    document.getElementById('tire2-height').textContent = `${tire2Height} мм`;
+    document.getElementById('tire-diff').textContent = `${diameterDiff} мм (${percentDiff}%)`;
+    document.getElementById('speed-diff').textContent = `${speedDiff}%`;
 
-        <div class="map-tip">
-            <p>💡 Данные обновляются автоматически на основе вашего местоположения</p>
-        </div>
-    </div>
+    // Рекомендация
+    let recommendation = '';
+    let recommendationClass = '';
+    const absDiff = Math.abs(parseFloat(percentDiff));
+    
+    if (absDiff < 1.5) {
+        recommendation = '✅ Размеры совместимы! Разница в допустимых пределах.';
+        recommendationClass = 'success';
+    } else if (absDiff < 3) {
+        recommendation = '⚠️ Размеры приемлемы, но возможны небольшие погрешности спидометра.';
+        recommendationClass = 'warning';
+    } else {
+        recommendation = '❌ Размеры не рекомендуются! Большая разница может повлиять на управляемость.';
+        recommendationClass = 'danger';
+    }
 
-    <!-- Документы -->
-    <div id="docs-screen" class="screen">
-        <div class="header">
-            <button class="btn-back" onclick="showScreen('main-screen')">← Назад</button>
-            <h2>Документы</h2>
-        </div>
+    const recommendationCard = document.getElementById('tire-recommendation-card');
+    recommendationCard.className = `tire-recommendation-card glass-card ${recommendationClass}`;
+    document.getElementById('tire-recommendation').textContent = recommendation;
+    document.getElementById('tire-result').style.display = 'block';
 
-        <div class="docs-grid">
-            <div class="doc-card">
-                <div class="doc-icon">🚗</div>
-                <h4>СТС</h4>
-                <p>Свидетельство о регистрации</p>
-                <button class="btn-secondary" onclick="uploadDoc('sts')">+ Загрузить</button>
-            </div>
+    if (tg.HapticFeedback) {
+        tg.HapticFeedback.notificationOccurred('success');
+    }
+}
 
-            <div class="doc-card">
-                <div class="doc-icon">🪪</div>
-                <h4>Водительское удостоверение</h4>
-                <p>Права</p>
-                <button class="btn-secondary" onclick="uploadDoc('license')">+ Загрузить</button>
-            </div>
+// ========== ПЕРИОД СТАТИСТИКИ ==========
+function setPeriod(period) {
+    document.querySelectorAll('.period-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
 
-            <div class="doc-card">
-                <div class="doc-icon">📋</div>
-                <h4>ОСАГО</h4>
-                <p>Полис страхования</p>
-                <button class="btn-secondary" onclick="uploadDoc('insurance')">+ Загрузить</button>
-            </div>
+    // Здесь можно загрузить данные за выбранный период
+    tg.showAlert(`Статистика за ${period === 'week' ? 'неделю' : period === 'month' ? 'месяц' : 'год'} загружена`);
+}
 
-            <div class="doc-card">
-                <div class="doc-icon">📄</div>
-                <h4>КАСКО</h4>
-                <p>Добровольное страхование</p>
-                <button class="btn-secondary" onclick="uploadDoc('kasko')">+ Загрузить</button>
-            </div>
+// ========== НАПОМИНАНИЯ ==========
+function addReminder() {
+    tg.showPopup({
+        title: 'Новое напоминание',
+        message: 'Используйте команду /maintenance в боте для добавления напоминаний о ТО',
+        buttons: [
+            {id: 'ok', type: 'ok'}
+        ]
+    });
+}
 
-            <div class="doc-card">
-                <div class="doc-icon">🔧</div>
-                <h4>Сервисная книжка</h4>
-                <p>История обслуживания</p>
-                <button class="btn-secondary" onclick="uploadDoc('service')">+ Загрузить</button>
-            </div>
+// ========== ДОКУМЕНТЫ ==========
+function uploadDoc(docType) {
+    const docNames = {
+        'sts': 'СТС',
+        'license': 'Водительское удостоверение',
+        'insurance': 'ОСАГО',
+        'kasko': 'КАСКО',
+        'service': 'Сервисная книжка',
+        'pts': 'ПТС'
+    };
 
-            <div class="doc-card">
-                <div class="doc-icon">💳</div>
-                <h4>ПТС</h4>
-                <p>Паспорт транспортного средства</p>
-                <button class="btn-secondary" onclick="uploadDoc('pts')">+ Загрузить</button>
-            </div>
-        </div>
+    tg.showPopup({
+        title: `Загрузить ${docNames[docType]}`,
+        message: 'Отправьте фото документа в чат с ботом с командой /docs',
+        buttons: [
+            {id: 'ok', type: 'ok'}
+        ]
+    });
+}
 
-        <div class="info-card">
-            <h4>ℹ️ Информация</h4>
-            <p>Документы хранятся только на вашем устройстве и не отправляются на сервер. Это безопасно!</p>
-        </div>
-    </div>
+// ========== ЛОКАЛЬНОЕ ХРАНИЛИЩЕ ==========
+function saveCalculation(type, data) {
+    const calculations = JSON.parse(localStorage.getItem('calculations') || '[]');
+    calculations.push({
+        type,
+        data,
+        timestamp: Date.now()
+    });
+    
+    // Храним последние 50 расчетов
+    if (calculations.length > 50) {
+        calculations.shift();
+    }
+    
+    localStorage.setItem('calculations', JSON.stringify(calculations));
+}
 
-    <!-- История поломок -->
-    <div id="issues-screen" class="screen">
-        <div class="header">
-            <button class="btn-back" onclick="showScreen('main-screen')">← Назад</button>
-            <h2>История поломок</h2>
-        </div>
+function loadLocalData() {
+    // Загрузка сохраненных расчетов
+    const calculations = JSON.parse(localStorage.getItem('calculations') || '[]');
+    
+    // Можно использовать для восстановления последних значений
+    if (calculations.length > 0) {
+        const lastFuel = calculations.filter(c => c.type === 'fuel').pop();
+        if (lastFuel) {
+            document.getElementById('fuel-distance').value = lastFuel.data.distance;
+            document.getElementById('fuel-consumption').value = lastFuel.data.consumption;
+            document.getElementById('fuel-price').value = lastFuel.data.price;
+        }
+    }
+}
 
-        <div class="issues-list">
-            <div class="issue-card resolved">
-                <div class="issue-header">
-                    <span class="issue-status">✓ Устранено</span>
-                    <span class="issue-date">10 сентября</span>
-                </div>
-                <h4>Посторонний шум в двигателе</h4>
-                <p><strong>Диагноз:</strong> Износ ремня генератора</p>
-                <p><strong>Решение:</strong> Замена ремня ГРМ</p>
-                <p class="issue-cost">Стоимость: 3,500 ₽</p>
-            </div>
+// ========== ОТПРАВКА ДАННЫХ БОТУ ==========
+function sendDataToBot(action, data) {
+    const payload = {
+        action: action,
+        data: data,
+        car: currentCar,
+        timestamp: Date.now()
+    };
+    
+    console.log('📤 Отправка данных боту:', payload);
+    
+    // Отправляем данные через Telegram Web App API
+    tg.sendData(JSON.stringify(payload));
+}
 
-            <div class="issue-card resolved">
-                <div class="issue-header">
-                    <span class="issue-status">✓ Устранено</span>
-                    <span class="issue-date">28 августа</span>
-                </div>
-                <h4>Горит Check Engine</h4>
-                <p><strong>Диагноз:</strong> Неисправность датчика кислорода</p>
-                <p><strong>Решение:</strong> Замена лямбда-зонда</p>
-                <p class="issue-cost">Стоимость: 4,200 ₽</p>
-            </div>
+// Запросить напоминания о ТО
+function requestRemindersFromBot() {
+    sendDataToBot('request_reminders', {});
+}
 
-            <div class="issue-card resolved">
-                <div class="issue-header">
-                    <span class="issue-status">✓ Устранено</span>
-                    <span class="issue-date">15 июля</span>
-                </div>
-                <h4>Вибрация при торможении</h4>
-                <p><strong>Диагноз:</strong> Деформация тормозных дисков</p>
-                <p><strong>Решение:</strong> Проточка дисков</p>
-                <p class="issue-cost">Стоимость: 2,000 ₽</p>
-            </div>
-        </div>
+// Обновить пробег
+function updateMileage(carId, newMileage) {
+    sendDataToBot('update_mileage', {
+        car_id: carId,
+        mileage: newMileage
+    });
+}
 
-        <button class="btn-primary" onclick="window.Telegram.WebApp.close()">Добавить новую поломку</button>
-        <p class="hint">Используйте команду /diagnostics в боте</p>
-    </div>
+// Обработка кнопки закрытия
+tg.onEvent('mainButtonClicked', () => {
+    tg.close();
+});
 
-    <!-- Статистика -->
-    <div id="stats-screen" class="screen">
-        <div class="header">
-            <h2>Статистика расходов</h2>
-            <p class="subtitle">Полная аналитика трат</p>
-        </div>
+// Готовность Mini App
+tg.ready();
 
-        <!-- Переключатель периода -->
-        <div class="period-selector">
-            <button class="period-btn active" onclick="setPeriod('week')">Неделя</button>
-            <button class="period-btn" onclick="setPeriod('month')">Месяц</button>
-            <button class="period-btn" onclick="setPeriod('year')">Год</button>
-        </div>
+console.log('🚗 Мой гараж загружен');
+console.log('Версия Telegram Web App:', tg.version);
+console.log('Платформа:', tg.platform);
+console.log('Данные пользователя:', userData);
+console.log('Данные гаража:', garageData);
 
-        <!-- Большая карточка с общей суммой -->
-        <div class="total-card glass-card">
-            <div class="total-icon">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <line x1="12" y1="1" x2="12" y2="23"/>
-                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-                </svg>
-            </div>
-            <h3>Всего потрачено</h3>
-            <div class="total-amount">12,450 ₽</div>
-            <p class="total-period">За текущий месяц</p>
-        </div>
 
-        <!-- Красивое распределение расходов -->
-        <div class="expenses-breakdown">
-            <h4>Распределение расходов</h4>
+// ============================================
+// VIN ДЕКОДЕР - ФУНКЦИИ
+// ============================================
+
+// Обработка ввода VIN (счетчик символов + валидация)
+function onVINInput(value) {
+    const vin = value.toUpperCase();
+    const counter = document.getElementById('vin-counter');
+    const decodeBtn = document.getElementById('decode-btn');
+    
+    // Обновляем счетчик
+    counter.textContent = `${vin.length} / 17 символов`;
+    
+    // Цвет счетчика
+    if (vin.length === 17) {
+        counter.style.color = '#10b981'; // Зеленый
+        decodeBtn.disabled = false;
+    } else if (vin.length > 0) {
+        counter.style.color = '#f59e0b'; // Желтый
+        decodeBtn.disabled = true;
+    } else {
+        counter.style.color = '#888'; // Серый
+        decodeBtn.disabled = true;
+    }
+    
+    // Автоматическая валидация символов (удаляем I, O, Q)
+    const sanitized = vin.replace(/[IOQ]/g, '');
+    if (sanitized !== vin) {
+        document.getElementById('vin-input').value = sanitized;
+        tg.showAlert('Символы I, O, Q не используются в VIN номерах');
+    }
+}
+
+// Декодирование VIN
+function decodeVINAction() {
+    const vinInput = document.getElementById('vin-input').value.trim().toUpperCase();
+    
+    if (!vinInput) {
+        tg.showAlert('Введите VIN номер');
+        return;
+    }
+    
+    // Скрываем предыдущие результаты
+    document.getElementById('vin-result').style.display = 'none';
+    document.getElementById('vin-error').style.display = 'none';
+    document.getElementById('vin-warning').style.display = 'none';
+    
+    // Декодируем VIN
+    const result = window.VINDecoder.decodeVIN(vinInput);
+    
+    if (!result.success) {
+        // Ошибка валидации
+        document.getElementById('error-message').textContent = result.error;
+        document.getElementById('vin-error').style.display = 'block';
+        return;
+    }
+    
+    if (!result.found) {
+        // Производитель не найден
+        document.getElementById('warning-message').textContent = 
+            result.warning + `\n\nGod выпуска: ${result.year || 'не определён'}`;
+        document.getElementById('vin-warning').style.display = 'block';
+        
+        // Предзаполняем год
+        if (result.year) {
+            // Сохраняем для дальнейшего использования
+            window.decodedVINData = {
+                vin: result.vin,
+                year: result.year,
+                wmi: result.wmi
+            };
+        }
+        return;
+    }
+    
+    // Успешное декодирование
+    displayVINResult(result);
+}
+
+// Отображение результатов декодирования
+function displayVINResult(result) {
+    // Заполняем данные
+    document.getElementById('result-vin').textContent = result.vin;
+    document.getElementById('result-brand').textContent = result.brand || '-';
+    document.getElementById('result-year').textContent = result.year || 'Не определён';
+    document.getElementById('result-country').textContent = result.country || '-';
+    document.getElementById('result-wmi').textContent = result.wmi;
+    
+    // Возможные модели
+    const modelsSection = document.getElementById('models-section');
+    const modelsList = document.getElementById('models-list');
+    
+    if (result.models && result.models.length > 0) {
+        modelsSection.style.display = 'block';
+        modelsList.innerHTML = '';
+        
+        result.models.forEach(model => {
+            const modelBtn = document.createElement('button');
+            modelBtn.className = 'model-btn';
+            modelBtn.textContent = model;
+            modelBtn.onclick = () => selectModel(model);
+            modelsList.appendChild(modelBtn);
+        });
+        
+        // Заполняем datalist для автокомплита
+        const datalist = document.getElementById('model-suggestions');
+        datalist.innerHTML = '';
+        result.models.forEach(model => {
+            const option = document.createElement('option');
+            option.value = model;
+            datalist.appendChild(option);
+        });
+    } else {
+        modelsSection.style.display = 'none';
+    }
+    
+    // Сохраняем данные для дальнейшего использования
+    window.decodedVINData = result;
+    
+    // Показываем результат
+    document.getElementById('vin-result').style.display = 'block';
+    
+    // Скроллим к результату
+    document.getElementById('vin-result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Выбор модели из списка
+function selectModel(model) {
+    document.getElementById('model-input').value = model;
+    
+    // Визуальная обратная связь
+    const buttons = document.querySelectorAll('.model-btn');
+    buttons.forEach(btn => {
+        if (btn.textContent === model) {
+            btn.style.backgroundColor = '#10b981';
+            btn.style.color = '#fff';
+        } else {
+            btn.style.backgroundColor = '';
+            btn.style.color = '';
+        }
+    });
+}
+
+// Сохранение автомобиля из VIN
+function saveCarFromVIN() {
+    const decodedData = window.decodedVINData;
+    
+    if (!decodedData) {
+        tg.showAlert('Сначала декодируйте VIN');
+        return;
+    }
+    
+    const model = document.getElementById('model-input').value.trim();
+    const mileage = document.getElementById('mileage-input').value.trim();
+    
+    if (!model) {
+        tg.showAlert('Введите модель автомобиля');
+        return;
+    }
+    
+    if (!mileage || parseInt(mileage) < 0) {
+        tg.showAlert('Введите корректный пробег');
+        return;
+    }
+    
+    // Формируем данные автомобиля
+    const carData = {
+        vin: decodedData.vin,
+        brand: decodedData.brand,
+        model: model,
+        year: decodedData.year,
+        current_mileage: parseInt(mileage),
+        country: decodedData.country,
+        wmi: decodedData.wmi
+    };
+    
+    console.log('💾 Сохранение авто из VIN:', carData);
+    
+    // Отправляем данные в бот
+    sendCarToBot(carData);
+}
+
+// Сохранение автомобиля вручную (когда WMI не найден)
+function saveManualCar() {
+    const decodedData = window.decodedVINData;
+    const brand = document.getElementById('manual-brand').value.trim();
+    const model = document.getElementById('manual-model').value.trim();
+    const mileage = document.getElementById('manual-mileage').value.trim();
+    
+    if (!brand) {
+        tg.showAlert('Введите марку автомобиля');
+        return;
+    }
+    
+    if (!model) {
+        tg.showAlert('Введите модель автомобиля');
+        return;
+    }
+    
+    if (!mileage || parseInt(mileage) < 0) {
+        tg.showAlert('Введите корректный пробег');
+        return;
+    }
+    
+    // Формируем данные
+    const carData = {
+        vin: decodedData ? decodedData.vin : document.getElementById('vin-input').value.trim().toUpperCase(),
+        brand: brand,
+        model: model,
+        year: decodedData ? decodedData.year : null,
+        current_mileage: parseInt(mileage),
+        wmi: decodedData ? decodedData.wmi : null
+    };
+    
+    console.log('💾 Сохранение авто вручную:', carData);
+    
+    // Отправляем данные в бот
+    sendCarToBot(carData);
+}
+
+// Отправка данных автомобиля в бот
+function sendCarToBot(carData) {
+    // Показываем индикатор загрузки
+    tg.MainButton.setText('💾 Сохранение...');
+    tg.MainButton.show();
+    tg.MainButton.disable();
+    
+    // Отправляем данные через WebApp API
+    tg.sendData(JSON.stringify({
+        action: 'add_car_from_vin',
+        car: carData
+    }));
+    
+    // Сохраняем в localStorage
+    if (!garageData) {
+        garageData = { cars: [] };
+    }
+    
+    if (!garageData.cars) {
+        garageData.cars = [];
+    }
+    
+    // Добавляем новый автомобиль
+    carData.id = Date.now(); // Временный ID
+    garageData.cars.push(carData);
+    localStorage.setItem('garageData', JSON.stringify(garageData));
+    
+    // Обновляем отображение
+    updateGarageDisplay(garageData.cars);
+    currentCar = carData;
+    
+    // Через 2 секунды закрываем Mini App
+    setTimeout(() => {
+        tg.close();
+    }, 2000);
+}
+
+// Сброс декодера
+function resetVINDecoder() {
+    // Очищаем поля
+    document.getElementById('vin-input').value = '';
+    document.getElementById('model-input').value = '';
+    document.getElementById('mileage-input').value = '';
+    document.getElementById('manual-brand').value = '';
+    document.getElementById('manual-model').value = '';
+    document.getElementById('manual-mileage').value = '';
+    
+    // Скрываем результаты
+    document.getElementById('vin-result').style.display = 'none';
+    document.getElementById('vin-error').style.display = 'none';
+    document.getElementById('vin-warning').style.display = 'none';
+    
+    // Сбрасываем счетчик
+    document.getElementById('vin-counter').textContent = '0 / 17 символов';
+    document.getElementById('vin-counter').style.color = '#888';
+    document.getElementById('decode-btn').disabled = true;
+    
+    // Удаляем сохраненные данные
+    window.decodedVINData = null;
+    
+    // Скроллим к началу
+    document.getElementById('vin-screen').scrollIntoView({ behavior: 'smooth' });
+}
+
+
+// ============================================
+// НАВИГАЦИЯ - Bottom Nav
+// ============================================
+
+function navigateTo(screenId) {
+    // Скрываем все экраны
+    document.querySelectorAll('.screen').forEach(screen => {
+        screen.classList.remove('active');
+    });
+    
+    // Показываем нужный экран
+    document.getElementById(screenId).classList.add('active');
+    
+    // Обновляем активную кнопку в навигации
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    
+    const activeNav = document.querySelector(`[data-screen="${screenId}"]`);
+    if (activeNav) {
+        activeNav.classList.add('active');
+    }
+    
+    // Скроллим вверх
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ============================================
+// РЕДАКТОР АВТОМОБИЛЯ
+// ============================================
+
+function loadCarDataToEditor() {
+    if (!currentCar) {
+        tg.showAlert('Сначала добавьте автомобиль');
+        showScreen('main-screen');
+        return;
+    }
+    
+    // Заполняем поля данными текущего авто
+    document.getElementById('edit-brand').value = currentCar.brand || '';
+    document.getElementById('edit-model').value = currentCar.model || '';
+    document.getElementById('edit-year').value = currentCar.year || '';
+    document.getElementById('edit-license-plate').value = currentCar.license_plate || '';
+    document.getElementById('edit-engine-type').value = currentCar.engine_type || '';
+    document.getElementById('edit-engine-volume').value = currentCar.engine_volume || '';
+    document.getElementById('edit-mileage').value = currentCar.current_mileage || '';
+}
+
+// Перехватываем переход на экран редактирования
+const originalShowScreen = window.showScreen;
+window.showScreen = function(screenId) {
+    if (screenId === 'edit-car-screen') {
+        loadCarDataToEditor();
+    }
+    originalShowScreen(screenId);
+};
+
+function saveCarChanges() {
+    const brand = document.getElementById('edit-brand').value.trim();
+    const model = document.getElementById('edit-model').value.trim();
+    const year = document.getElementById('edit-year').value.trim();
+    const licensePlate = document.getElementById('edit-license-plate').value.trim().toUpperCase();
+    const engineType = document.getElementById('edit-engine-type').value;
+    const engineVolume = document.getElementById('edit-engine-volume').value.trim();
+    const mileage = document.getElementById('edit-mileage').value.trim();
+    
+    // Валидация
+    if (!brand) {
+        tg.showAlert('Введите марку автомобиля');
+        return;
+    }
+    
+    if (!model) {
+        tg.showAlert('Введите модель автомобиля');
+        return;
+    }
+    
+    if (!mileage || parseInt(mileage) < 0) {
+        tg.showAlert('Введите корректный пробег');
+        return;
+    }
+    
+    // Формируем данные для отправки
+    const updatedCar = {
+        id: currentCar.id,
+        brand: brand,
+        model: model,
+        year: year ? parseInt(year) : null,
+        license_plate: licensePlate || null,
+        engine_type: engineType || null,
+        engine_volume: engineVolume ? parseFloat(engineVolume) : null,
+        current_mileage: parseInt(mileage)
+    };
+    
+    console.log('💾 Сохранение изменений авто:', updatedCar);
+    
+    // Отправляем в бот
+    tg.sendData(JSON.stringify({
+        action: 'update_car',
+        car: updatedCar
+    }));
+    
+    // Обновляем локальные данные
+    currentCar = updatedCar;
+    
+    // Обновляем отображение в гараже
+    updateCarDisplay(currentCar);
+    
+    // Сохраняем в localStorage
+    if (garageData && garageData.cars) {
+        const carIndex = garageData.cars.findIndex(c => c.id === currentCar.id);
+        if (carIndex !== -1) {
+            garageData.cars[carIndex] = currentCar;
+            localStorage.setItem('garageData', JSON.stringify(garageData));
+        }
+    }
+    
+    // Показываем уведомление
+    tg.showAlert('✅ Изменения сохранены!');
+    
+    // Возвращаемся на главный экран
+    setTimeout(() => {
+        navigateTo('main-screen');
+    }, 1500);
+}
+
+function confirmDeleteCar() {
+    tg.showConfirm(
+        '⚠️ Вы уверены, что хотите удалить этот автомобиль?\n\nВсе данные (ТО, расходы, поломки) будут удалены!',
+        (confirmed) => {
+            if (confirmed) {
+                deleteCar();
+            }
+        }
+    );
+}
+
+function deleteCar() {
+    if (!currentCar || !currentCar.id) {
+        tg.showAlert('Ошибка: автомобиль не найден');
+        return;
+    }
+    
+    console.log('🗑️ Удаление автомобиля:', currentCar.id);
+    
+    // Отправляем в бот
+    tg.sendData(JSON.stringify({
+        action: 'delete_car',
+        car_id: currentCar.id
+    }));
+    
+    // Удаляем из локальных данных
+    if (garageData && garageData.cars) {
+        garageData.cars = garageData.cars.filter(c => c.id !== currentCar.id);
+        localStorage.setItem('garageData', JSON.stringify(garageData));
+    }
+    
+    // Показываем уведомление
+    tg.showAlert('🗑️ Автомобиль удалён');
+    
+    // Закрываем Mini App
+    setTimeout(() => {
+        tg.close();
+    }, 1500);
+}
+
+function updateCarDisplay(car) {
+    if (!car) return;
+    
+    const carName = document.getElementById('car-name');
+    const carSpecs = document.getElementById('car-specs');
+    
+    if (carName) {
+        carName.textContent = `${car.brand} ${car.model}`;
+    }
+    
+    if (carSpecs) {
+        let specs = [];
+        if (car.year) specs.push(car.year);
+        if (car.engine_type) specs.push(car.engine_type);
+        if (car.engine_volume) specs.push(`${car.engine_volume}л`);
+        if (car.current_mileage) specs.push(`${car.current_mileage.toLocaleString()} км`);
+        
+        carSpecs.textContent = specs.join(' • ') || 'Добавьте данные';
+    }
+}
+
+
+// ============================================
+// КАРТА - СТО И ЗАПРАВКИ
+// ============================================
+
+let userLocation = null;
+let currentFilter = 'all';
+
+function requestLocation() {
+    if (!navigator.geolocation) {
+        tg.showAlert('❌ Геолокация не поддерживается вашим устройством');
+        return;
+    }
+    
+    console.log('📍 Запрос геолокации...');
+    
+    navigator.geolocation.getCurrentPosition(
+        (position) => {
+            userLocation = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+            };
             
-            <div class="expense-item">
-                <div class="expense-icon gradient-danger">⛽</div>
-                <div class="expense-details">
-                    <div class="expense-header">
-                        <span class="expense-name">Топливо</span>
-                        <strong class="expense-amount">7,470 ₽</strong>
-                    </div>
-                    <div class="expense-bar-container">
-                        <div class="expense-bar">
-                            <div class="expense-fill gradient-danger" style="width: 60%"></div>
-                        </div>
-                        <span class="expense-percent">60%</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="expense-item">
-                <div class="expense-icon gradient-primary">🔧</div>
-                <div class="expense-details">
-                    <div class="expense-header">
-                        <span class="expense-name">Обслуживание</span>
-                        <strong class="expense-amount">3,112 ₽</strong>
-                    </div>
-                    <div class="expense-bar-container">
-                        <div class="expense-bar">
-                            <div class="expense-fill gradient-primary" style="width: 25%"></div>
-                        </div>
-                        <span class="expense-percent">25%</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="expense-item">
-                <div class="expense-icon gradient-warning">🅿️</div>
-                <div class="expense-details">
-                    <div class="expense-header">
-                        <span class="expense-name">Парковка</span>
-                        <strong class="expense-amount">1,245 ₽</strong>
-                    </div>
-                    <div class="expense-bar-container">
-                        <div class="expense-bar">
-                            <div class="expense-fill gradient-warning" style="width: 10%"></div>
-                        </div>
-                        <span class="expense-percent">10%</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="expense-item">
-                <div class="expense-icon gradient-success">🚗</div>
-                <div class="expense-details">
-                    <div class="expense-header">
-                        <span class="expense-name">Прочее</span>
-                        <strong class="expense-amount">623 ₽</strong>
-                    </div>
-                    <div class="expense-bar-container">
-                        <div class="expense-bar">
-                            <div class="expense-fill gradient-success" style="width: 5%"></div>
-                        </div>
-                        <span class="expense-percent">5%</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Карточка экономии -->
-        <div class="savings-card glass-card">
-            <div class="savings-icon">💡</div>
-            <h4>Потенциальная экономия</h4>
-            <p>При снижении расхода топлива на 0.5 л/100км вы сэкономите:</p>
-            <div class="savings-amount">~850 ₽/месяц</div>
-        </div>
-    </div>
-
-    <!-- VIN Декодер -->
-    <div id="vin-screen" class="screen">
-        <div class="header">
-            <button class="btn-back" onclick="showScreen('main-screen')">← Назад</button>
-            <h2>⚡ Добавить авто по VIN</h2>
-        </div>
-
-        <div class="info-card">
-            <h4>ℹ️ Что такое VIN?</h4>
-            <p>VIN (Vehicle Identification Number) - уникальный 17-символьный код вашего автомобиля. Найти его можно:</p>
-            <ul>
-                <li>📄 В СТС (свидетельство о регистрации)</li>
-                <li>💳 В ПТС (паспорт ТС)</li>
-                <li>🚗 На кузове автомобиля (под капотом, на стойке двери)</li>
-            </ul>
-        </div>
-
-        <div class="calculator-form">
-            <div class="form-group">
-                <label>Введите VIN номер (17 символов)</label>
-                <input 
-                    type="text" 
-                    id="vin-input" 
-                    placeholder="WVWZZZ1KZDW123456" 
-                    maxlength="17"
-                    oninput="onVINInput(this.value)"
-                    style="text-transform: uppercase; font-family: monospace; font-size: 16px;">
-                <small id="vin-counter" style="color: #888;">0 / 17 символов</small>
-            </div>
-
-            <button class="btn-primary" onclick="decodeVINAction()" id="decode-btn" disabled>
-                🔍 Декодировать VIN
-            </button>
-        </div>
-
-        <!-- Результат декодирования -->
-        <div class="result-card" id="vin-result" style="display: none;">
-            <h3>✅ Данные автомобиля:</h3>
+            console.log('✅ Геолокация получена:', userLocation);
             
-            <div class="vin-result-grid">
-                <div class="vin-result-item">
-                    <span class="vin-result-label">VIN номер:</span>
-                    <strong id="result-vin">-</strong>
-                </div>
-                
-                <div class="vin-result-item">
-                    <span class="vin-result-label">🚗 Марка:</span>
-                    <strong id="result-brand">-</strong>
-                </div>
-                
-                <div class="vin-result-item">
-                    <span class="vin-result-label">📅 Год выпуска:</span>
-                    <strong id="result-year">-</strong>
-                </div>
-                
-                <div class="vin-result-item">
-                    <span class="vin-result-label">🌍 Страна производства:</span>
-                    <strong id="result-country">-</strong>
-                </div>
-                
-                <div class="vin-result-item">
-                    <span class="vin-result-label">🏭 WMI код:</span>
-                    <strong id="result-wmi">-</strong>
-                </div>
-            </div>
-
-            <!-- Возможные модели -->
-            <div id="models-section" style="display: none;">
-                <h4>📋 Возможные модели:</h4>
-                <div id="models-list" class="models-grid"></div>
-            </div>
-
-            <!-- Выбор модели вручную -->
-            <div id="manual-model-section">
-                <h4>Выберите или введите модель:</h4>
-                <div class="form-group">
-                    <input 
-                        type="text" 
-                        id="model-input" 
-                        placeholder="Например: Camry, Solaris, Octavia"
-                        list="model-suggestions">
-                    <datalist id="model-suggestions"></datalist>
-                </div>
-            </div>
-
-            <!-- Пробег -->
-            <div class="form-group">
-                <label>Текущий пробег (км)</label>
-                <input type="number" id="mileage-input" placeholder="50000" min="0">
-            </div>
-
-            <!-- Кнопки действий -->
-            <div class="vin-actions">
-                <button class="btn-primary" onclick="saveCarFromVIN()">
-                    💾 Сохранить автомобиль
-                </button>
-                <button class="btn-secondary" onclick="resetVINDecoder()">
-                    🔄 Ввести другой VIN
-                </button>
-            </div>
-        </div>
-
-        <!-- Ошибка декодирования -->
-        <div class="error-card" id="vin-error" style="display: none;">
-            <h4>❌ Ошибка</h4>
-            <p id="error-message"></p>
-            <button class="btn-secondary" onclick="resetVINDecoder()">Попробовать снова</button>
-        </div>
-
-        <!-- Предупреждение о неизвестном WMI -->
-        <div class="warning-card" id="vin-warning" style="display: none;">
-            <h4>⚠️ Производитель не найден</h4>
-            <p id="warning-message"></p>
-            <p>Вы можете добавить автомобиль вручную:</p>
+            // Обновляем карту
+            showMapWithLocation();
             
-            <div class="form-group">
-                <label>Марка автомобиля</label>
-                <input type="text" id="manual-brand" placeholder="Toyota">
-            </div>
+            // Обновляем расстояния до мест
+            updatePlacesDistances();
             
-            <div class="form-group">
-                <label>Модель</label>
-                <input type="text" id="manual-model" placeholder="Camry">
-            </div>
+            tg.showAlert('✅ Местоположение определено');
+        },
+        (error) => {
+            console.error('❌ Ошибка геолокации:', error);
             
-            <div class="form-group">
-                <label>Текущий пробег (км)</label>
-                <input type="number" id="manual-mileage" placeholder="50000" min="0">
-            </div>
+            let errorMessage = 'Не удалось определить местоположение';
             
-            <button class="btn-primary" onclick="saveManualCar()">
-                💾 Сохранить автомобиль
-            </button>
-        </div>
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    errorMessage = 'Вы запретили доступ к геолокации. Разрешите в настройках браузера.';
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    errorMessage = 'Местоположение недоступно';
+                    break;
+                case error.TIMEOUT:
+                    errorMessage = 'Превышено время ожидания';
+                    break;
+            }
+            
+            tg.showAlert(errorMessage);
+        },
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+        }
+    );
+}
 
-        <div class="tips-card">
-            <h4>🔐 Безопасность</h4>
-            <p>VIN декодер работает полностью в вашем браузере. Данные не отправляются на сторонние серверы и остаются конфиденциальными.</p>
-        </div>
+function showMapWithLocation() {
+    if (!userLocation) return;
+    
+    const mapView = document.getElementById('map-view');
+    
+    // Используем Yandex Maps (работает в России)
+    const yandexMapUrl = `https://yandex.ru/maps/?ll=${userLocation.lng},${userLocation.lat}&z=14&l=map`;
+    
+    mapView.innerHTML = `
+        <button class="btn-locate" onclick="requestLocation()">
+            <span>📍</span> Обновить
+        </button>
+        <iframe 
+            src="${yandexMapUrl}" 
+            width="100%" 
+            height="100%" 
+            frameborder="0" 
+            style="border: none; border-radius: var(--radius-lg);">
+        </iframe>
+    `;
+}
 
-        <div class="tips-card">
-            <h4>💡 Поддерживаемые марки</h4>
-            <p>В базе более 200 производителей из России, Европы, США, Японии, Кореи и Китая. Работает для всех автомобилей, зарегистрированных в России.</p>
-        </div>
-    </div>
+function updatePlacesDistances() {
+    // В реальном приложении здесь будет расчет реальных расстояний через API
+    // Сейчас просто обновляем счетчик
+    const allPlaces = document.querySelectorAll('.place-card');
+    const visiblePlaces = Array.from(allPlaces).filter(place => {
+        return place.style.display !== 'none';
+    });
+    
+    const countEl = document.getElementById('places-count');
+    if (countEl) {
+        countEl.textContent = `${visiblePlaces.length} найдено`;
+    }
+    
+    // Сортируем по расстоянию
+    const placesList = document.getElementById('places-list');
+    const sortedPlaces = Array.from(allPlaces).sort((a, b) => {
+        const distA = parseFloat(a.dataset.distance) || 999;
+        const distB = parseFloat(b.dataset.distance) || 999;
+        return distA - distB;
+    });
+    
+    // Перемещаем в отсортированном порядке
+    const header = placesList.querySelector('.places-header');
+    sortedPlaces.forEach(place => {
+        if (header) {
+            header.insertAdjacentElement('afterend', place);
+        }
+    });
+}
 
-    <!-- ЭКРАН: Редактор автомобиля -->
-    <div id="edit-car-screen" class="screen">
-        <div class="header">
-            <button class="btn-back" onclick="showScreen('main-screen')">← Назад</button>
-            <h2>✏️ Редактировать авто</h2>
-        </div>
+function filterPlaces(type) {
+    currentFilter = type;
+    
+    // Обновляем активную кнопку
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.type === type) {
+            btn.classList.add('active');
+        }
+    });
+    
+    // Фильтруем карточки
+    const places = document.querySelectorAll('.place-card');
+    let visibleCount = 0;
+    
+    places.forEach(place => {
+        if (type === 'all' || place.dataset.type === type) {
+            place.style.display = 'flex';
+            visibleCount++;
+        } else {
+            place.style.display = 'none';
+        }
+    });
+    
+    // Обновляем счетчик
+    const countEl = document.getElementById('places-count');
+    if (countEl) {
+        countEl.textContent = `${visibleCount} найдено`;
+    }
+    
+    // Анимация
+    places.forEach((place, index) => {
+        if (place.style.display === 'flex') {
+            setTimeout(() => {
+                place.style.animation = 'slideIn 0.3s ease-out';
+            }, index * 50);
+        }
+    });
+}
 
-        <div class="edit-car-form">
-            <div class="form-group">
-                <label>🚗 Марка</label>
-                <input type="text" id="edit-brand" placeholder="Toyota">
-            </div>
+function openRoute(coords) {
+    if (!coords) return;
+    
+    // Открываем маршрут в Yandex Maps
+    const [lat, lng] = coords.split(',');
+    
+    if (userLocation) {
+        // Маршрут от текущего местоположения
+        const routeUrl = `https://yandex.ru/maps/?rtext=${userLocation.lat},${userLocation.lng}~${lat},${lng}&rtt=auto`;
+        window.open(routeUrl, '_blank');
+    } else {
+        // Просто открываем точку на карте
+        const pointUrl = `https://yandex.ru/maps/?ll=${lng},${lat}&z=16&l=map`;
+        window.open(pointUrl, '_blank');
+    }
+}
 
-            <div class="form-group">
-                <label>📋 Модель</label>
-                <input type="text" id="edit-model" placeholder="Camry">
-            </div>
-
-            <div class="form-group">
-                <label>📅 Год выпуска</label>
-                <input type="number" id="edit-year" placeholder="2020" min="1900" max="2030">
-            </div>
-
-            <div class="form-group">
-                <label>🔢 Госномер</label>
-                <input type="text" id="edit-license-plate" placeholder="А123БВ777" style="text-transform: uppercase;">
-            </div>
-
-            <div class="form-group">
-                <label>⛽ Тип двигателя</label>
-                <select id="edit-engine-type">
-                    <option value="">Выберите тип</option>
-                    <option value="Бензин">Бензин</option>
-                    <option value="Дизель">Дизель</option>
-                    <option value="Гибрид">Гибрид</option>
+// Инициализация карты при загрузке экрана
+document.addEventListener('DOMContentLoaded', () => {
+    // Устанавливаем начальный счётчик
+    updatePlacesDistances();
+    
+    // Автоматически запрашиваем геолокацию при первом открытии карты
+    const originalShowScreenMap = window.showScreen;
+    window.showScreen = function(screenId) {
+        if (originalShowScreenMap) originalShowScreenMap(screenId);
+        
+        if (screenId === 'map-screen' && !userLocation) {
+            // Небольшая задержка для плавности
+            setTimeout(() => {
+                // requestLocation(); // Раскомментируй, если нужна автозагрузка геолокации
+            }, 500);
+        }
+    };
+});

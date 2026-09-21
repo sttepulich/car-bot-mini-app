@@ -180,103 +180,218 @@
     <!-- Калькулятор шин -->
     <div id="tire-screen" class="screen">
         <div class="header">
-            <button class="btn-back" onclick="showScreen('main-screen')">← Назад</button>
+            <button class="btn-back" onclick="showScreen('main-screen')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12"/>
+                    <polyline points="12 19 5 12 12 5"/>
+                </svg>
+                Назад
+            </button>
             <h2>Калькулятор шин</h2>
         </div>
 
         <div class="calculator-form">
-            <h3>Текущие шины</h3>
-            <div class="tire-input-group">
-                <input type="number" id="tire1-width" placeholder="195" class="tire-input">
-                <span class="tire-separator">/</span>
-                <input type="number" id="tire1-profile" placeholder="65" class="tire-input">
-                <span class="tire-separator">R</span>
-                <input type="number" id="tire1-diameter" placeholder="15" class="tire-input">
+            <!-- Текущие шины -->
+            <div class="tire-section glass-card">
+                <div class="tire-section-header">
+                    <div class="tire-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <circle cx="12" cy="12" r="10"/>
+                            <circle cx="12" cy="12" r="6"/>
+                        </svg>
+                    </div>
+                    <h3>Текущие шины</h3>
+                </div>
+                <div class="tire-input-group">
+                    <input type="number" id="tire1-width" placeholder="195" class="tire-input">
+                    <span class="tire-separator">/</span>
+                    <input type="number" id="tire1-profile" placeholder="65" class="tire-input">
+                    <span class="tire-separator">R</span>
+                    <input type="number" id="tire1-diameter" placeholder="15" class="tire-input">
+                </div>
             </div>
 
-            <h3>Новые шины</h3>
-            <div class="tire-input-group">
-                <input type="number" id="tire2-width" placeholder="205" class="tire-input">
-                <span class="tire-separator">/</span>
-                <input type="number" id="tire2-profile" placeholder="55" class="tire-input">
-                <span class="tire-separator">R</span>
-                <input type="number" id="tire2-diameter" placeholder="16" class="tire-input">
+            <!-- Новые шины -->
+            <div class="tire-section glass-card">
+                <div class="tire-section-header">
+                    <div class="tire-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <circle cx="12" cy="12" r="10"/>
+                            <circle cx="12" cy="12" r="6"/>
+                            <circle cx="12" cy="12" r="2"/>
+                        </svg>
+                    </div>
+                    <h3>Новые шины</h3>
+                </div>
+                <div class="tire-input-group">
+                    <input type="number" id="tire2-width" placeholder="205" class="tire-input">
+                    <span class="tire-separator">/</span>
+                    <input type="number" id="tire2-profile" placeholder="55" class="tire-input">
+                    <span class="tire-separator">R</span>
+                    <input type="number" id="tire2-diameter" placeholder="16" class="tire-input">
+                </div>
             </div>
 
-            <button class="btn-primary" onclick="calculateTires()">Сравнить</button>
+            <button class="btn-primary" onclick="calculateTires()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+                Сравнить размеры
+            </button>
         </div>
 
-        <div class="result-card" id="tire-result" style="display: none;">
-            <h3>Результаты сравнения:</h3>
+        <!-- Результат сравнения -->
+        <div class="result-card glass-card" id="tire-result" style="display: none;">
+            <h3>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Результаты сравнения
+            </h3>
+            
             <div class="tire-comparison">
                 <div class="tire-col">
+                    <div class="tire-col-icon current">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <circle cx="12" cy="12" r="10"/>
+                            <circle cx="12" cy="12" r="6"/>
+                        </svg>
+                    </div>
                     <h4>Текущие</h4>
-                    <div class="result-item">
+                    <div class="tire-stat">
                         <span>Диаметр:</span>
                         <strong id="tire1-total-diameter">-</strong>
                     </div>
-                    <div class="result-item">
+                    <div class="tire-stat">
                         <span>Высота:</span>
                         <strong id="tire1-height">-</strong>
                     </div>
                 </div>
+                
+                <div class="comparison-arrow">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                        <polyline points="12 5 19 12 12 19"/>
+                    </svg>
+                </div>
+                
                 <div class="tire-col">
+                    <div class="tire-col-icon new">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <circle cx="12" cy="12" r="10"/>
+                            <circle cx="12" cy="12" r="6"/>
+                            <circle cx="12" cy="12" r="2"/>
+                        </svg>
+                    </div>
                     <h4>Новые</h4>
-                    <div class="result-item">
+                    <div class="tire-stat">
                         <span>Диаметр:</span>
                         <strong id="tire2-total-diameter">-</strong>
                     </div>
-                    <div class="result-item">
+                    <div class="tire-stat">
                         <span>Высота:</span>
                         <strong id="tire2-height">-</strong>
                     </div>
                 </div>
             </div>
-            <div class="result-item highlight">
-                <span>Разница в диаметре:</span>
-                <strong id="tire-diff">-</strong>
+
+            <!-- Разница -->
+            <div class="tire-difference">
+                <div class="difference-item">
+                    <div class="difference-icon">📏</div>
+                    <div class="difference-content">
+                        <span>Разница в диаметре</span>
+                        <strong id="tire-diff">-</strong>
+                    </div>
+                </div>
+                <div class="difference-item">
+                    <div class="difference-icon">⚡</div>
+                    <div class="difference-content">
+                        <span>Изменение скорости</span>
+                        <strong id="speed-diff">-</strong>
+                    </div>
+                </div>
             </div>
-            <div class="result-item highlight">
-                <span>Изменение скорости:</span>
-                <strong id="speed-diff">-</strong>
+
+            <!-- Рекомендация -->
+            <div class="tire-recommendation-card" id="tire-recommendation-card">
+                <p id="tire-recommendation"></p>
             </div>
-            <p class="tire-recommendation" id="tire-recommendation"></p>
         </div>
     </div>
 
     <!-- Анализ расхода -->
     <div id="consumption-screen" class="screen">
         <div class="header">
-            <button class="btn-back" onclick="showScreen('main-screen')">← Назад</button>
+            <button class="btn-back" onclick="showScreen('main-screen')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12"/>
+                    <polyline points="12 19 5 12 12 5"/>
+                </svg>
+                Назад
+            </button>
             <h2>Анализ расхода</h2>
         </div>
 
-        <div class="chart-container">
-            <canvas id="consumption-chart"></canvas>
+        <!-- Большая карточка с основной статистикой -->
+        <div class="hero-stat-card">
+            <div class="hero-stat-icon">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <line x1="18" y1="20" x2="18" y2="10"/>
+                    <line x1="12" y1="20" x2="12" y2="4"/>
+                    <line x1="6" y1="20" x2="6" y2="14"/>
+                </svg>
+            </div>
+            <h3>Средний расход</h3>
+            <div class="hero-stat-value" id="avg-consumption">7.2 л</div>
+            <p>на 100 км за последний месяц</p>
         </div>
 
+        <!-- Сетка мини-карточек -->
         <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-value" id="avg-consumption">7.2 л</div>
-                <div class="stat-label">Средний расход</div>
+            <div class="mini-stat-card gradient-primary">
+                <div class="mini-stat-icon">📏</div>
+                <div class="mini-stat-value" id="total-distance">1,245 км</div>
+                <div class="mini-stat-label">Пробег за месяц</div>
             </div>
-            <div class="stat-card">
-                <div class="stat-value" id="total-distance">1,245 км</div>
-                <div class="stat-label">Пробег за месяц</div>
+            <div class="mini-stat-card gradient-success">
+                <div class="mini-stat-icon">⛽</div>
+                <div class="mini-stat-value" id="total-fuel">89.6 л</div>
+                <div class="mini-stat-label">Израсходовано</div>
             </div>
-            <div class="stat-card">
-                <div class="stat-value" id="total-fuel">89.6 л</div>
-                <div class="stat-label">Израсходовано</div>
+            <div class="mini-stat-card gradient-warning">
+                <div class="mini-stat-icon">💰</div>
+                <div class="mini-stat-value" id="fuel-cost-month">4,928 ₽</div>
+                <div class="mini-stat-label">Затраты</div>
             </div>
-            <div class="stat-card">
-                <div class="stat-value" id="fuel-cost-month">4,928 ₽</div>
-                <div class="stat-label">Затраты за месяц</div>
+            <div class="mini-stat-card gradient-danger">
+                <div class="mini-stat-icon">📊</div>
+                <div class="mini-stat-value">+5%</div>
+                <div class="mini-stat-label">Рост расхода</div>
             </div>
         </div>
 
-        <div class="trend-card">
-            <h4>📈 Тенденция</h4>
+        <!-- Карточка тренда -->
+        <div class="trend-card glass-card">
+            <div class="trend-header">
+                <h4>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                    </svg>
+                    Тенденция
+                </h4>
+                <span class="trend-badge stable">Стабильно</span>
+            </div>
             <p id="trend-text">Ваш расход топлива стабилен. Продолжайте в том же духе!</p>
+            <div class="trend-chart">
+                <div class="chart-bar" style="height: 60%"></div>
+                <div class="chart-bar" style="height: 75%"></div>
+                <div class="chart-bar" style="height: 70%"></div>
+                <div class="chart-bar" style="height: 80%"></div>
+                <div class="chart-bar" style="height: 65%"></div>
+                <div class="chart-bar" style="height: 70%"></div>
+                <div class="chart-bar" style="height: 72%"></div>
+            </div>
         </div>
     </div>
 
@@ -569,68 +684,103 @@
     <!-- Статистика -->
     <div id="stats-screen" class="screen">
         <div class="header">
-            <button class="btn-back" onclick="showScreen('main-screen')">← Назад</button>
             <h2>Статистика расходов</h2>
+            <p class="subtitle">Полная аналитика трат</p>
         </div>
 
+        <!-- Переключатель периода -->
         <div class="period-selector">
             <button class="period-btn active" onclick="setPeriod('week')">Неделя</button>
             <button class="period-btn" onclick="setPeriod('month')">Месяц</button>
             <button class="period-btn" onclick="setPeriod('year')">Год</button>
         </div>
 
-        <div class="total-card">
+        <!-- Большая карточка с общей суммой -->
+        <div class="total-card glass-card">
+            <div class="total-icon">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <line x1="12" y1="1" x2="12" y2="23"/>
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                </svg>
+            </div>
             <h3>Всего потрачено</h3>
             <div class="total-amount">12,450 ₽</div>
             <p class="total-period">За текущий месяц</p>
         </div>
 
+        <!-- Красивое распределение расходов -->
         <div class="expenses-breakdown">
-            <h4>Распределение расходов:</h4>
+            <h4>Распределение расходов</h4>
             
             <div class="expense-item">
-                <div class="expense-bar">
-                    <div class="expense-fill" style="width: 60%"></div>
-                </div>
-                <div class="expense-label">
-                    <span>⛽ Топливо</span>
-                    <strong>7,470 ₽ (60%)</strong>
-                </div>
-            </div>
-
-            <div class="expense-item">
-                <div class="expense-bar">
-                    <div class="expense-fill" style="width: 25%"></div>
-                </div>
-                <div class="expense-label">
-                    <span>🔧 Обслуживание</span>
-                    <strong>3,112 ₽ (25%)</strong>
+                <div class="expense-icon gradient-danger">⛽</div>
+                <div class="expense-details">
+                    <div class="expense-header">
+                        <span class="expense-name">Топливо</span>
+                        <strong class="expense-amount">7,470 ₽</strong>
+                    </div>
+                    <div class="expense-bar-container">
+                        <div class="expense-bar">
+                            <div class="expense-fill gradient-danger" style="width: 60%"></div>
+                        </div>
+                        <span class="expense-percent">60%</span>
+                    </div>
                 </div>
             </div>
 
             <div class="expense-item">
-                <div class="expense-bar">
-                    <div class="expense-fill" style="width: 10%"></div>
-                </div>
-                <div class="expense-label">
-                    <span>🅿️ Парковка</span>
-                    <strong>1,245 ₽ (10%)</strong>
+                <div class="expense-icon gradient-primary">🔧</div>
+                <div class="expense-details">
+                    <div class="expense-header">
+                        <span class="expense-name">Обслуживание</span>
+                        <strong class="expense-amount">3,112 ₽</strong>
+                    </div>
+                    <div class="expense-bar-container">
+                        <div class="expense-bar">
+                            <div class="expense-fill gradient-primary" style="width: 25%"></div>
+                        </div>
+                        <span class="expense-percent">25%</span>
+                    </div>
                 </div>
             </div>
 
             <div class="expense-item">
-                <div class="expense-bar">
-                    <div class="expense-fill" style="width: 5%"></div>
+                <div class="expense-icon gradient-warning">🅿️</div>
+                <div class="expense-details">
+                    <div class="expense-header">
+                        <span class="expense-name">Парковка</span>
+                        <strong class="expense-amount">1,245 ₽</strong>
+                    </div>
+                    <div class="expense-bar-container">
+                        <div class="expense-bar">
+                            <div class="expense-fill gradient-warning" style="width: 10%"></div>
+                        </div>
+                        <span class="expense-percent">10%</span>
+                    </div>
                 </div>
-                <div class="expense-label">
-                    <span>🚗 Прочее</span>
-                    <strong>623 ₽ (5%)</strong>
+            </div>
+
+            <div class="expense-item">
+                <div class="expense-icon gradient-success">🚗</div>
+                <div class="expense-details">
+                    <div class="expense-header">
+                        <span class="expense-name">Прочее</span>
+                        <strong class="expense-amount">623 ₽</strong>
+                    </div>
+                    <div class="expense-bar-container">
+                        <div class="expense-bar">
+                            <div class="expense-fill gradient-success" style="width: 5%"></div>
+                        </div>
+                        <span class="expense-percent">5%</span>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="savings-card">
-            <h4>💡 Потенциальная экономия</h4>
+        <!-- Карточка экономии -->
+        <div class="savings-card glass-card">
+            <div class="savings-icon">💡</div>
+            <h4>Потенциальная экономия</h4>
             <p>При снижении расхода топлива на 0.5 л/100км вы сэкономите:</p>
             <div class="savings-amount">~850 ₽/месяц</div>
         </div>
@@ -846,43 +996,78 @@
     <!-- ЭКРАН: Инструменты -->
     <div id="tools-screen" class="screen">
         <div class="header">
-            <h2>🛠️ Инструменты</h2>
+            <h2>Инструменты</h2>
             <p class="subtitle">Калькуляторы и помощники</p>
         </div>
 
         <div class="tools-grid">
             <div class="tool-card" onclick="showScreen('fuel-screen')">
-                <div class="tool-icon">⛽</div>
+                <div class="tool-icon-svg">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M3 22V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/>
+                        <path d="M3 10h8"/>
+                        <path d="M13 6h5a2 2 0 0 1 2 2v3"/>
+                        <path d="M21 12v6a1 1 1 0 0 1-1 1h-1"/>
+                    </svg>
+                </div>
                 <h3>Топливо</h3>
                 <p>Расчет расхода и стоимости</p>
             </div>
 
             <div class="tool-card" onclick="showScreen('tire-screen')">
-                <div class="tool-icon">🛞</div>
+                <div class="tool-icon-svg">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="12" cy="12" r="10"/>
+                        <circle cx="12" cy="12" r="6"/>
+                        <circle cx="12" cy="12" r="2"/>
+                    </svg>
+                </div>
                 <h3>Шины</h3>
                 <p>Подбор размеров</p>
             </div>
 
             <div class="tool-card" onclick="showScreen('consumption-screen')">
-                <div class="tool-icon">📈</div>
+                <div class="tool-icon-svg">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <line x1="18" y1="20" x2="18" y2="10"/>
+                        <line x1="12" y1="20" x2="12" y2="4"/>
+                        <line x1="6" y1="20" x2="6" y2="14"/>
+                    </svg>
+                </div>
                 <h3>Анализ</h3>
                 <p>Статистика расхода</p>
             </div>
 
             <div class="tool-card" onclick="showScreen('vin-screen')">
-                <div class="tool-icon">⚡</div>
+                <div class="tool-icon-svg">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                    </svg>
+                </div>
                 <h3>VIN декодер</h3>
                 <p>Поиск авто по VIN</p>
             </div>
 
             <div class="tool-card" onclick="showScreen('map-screen')">
-                <div class="tool-icon">🗺️</div>
+                <div class="tool-icon-svg">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                        <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                </div>
                 <h3>Карта</h3>
                 <p>Сервисы рядом</p>
             </div>
 
             <div class="tool-card" onclick="showScreen('docs-screen')">
-                <div class="tool-icon">📄</div>
+                <div class="tool-icon-svg">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                    </svg>
+                </div>
                 <h3>Документы</h3>
                 <p>СТС, полис, права</p>
             </div>

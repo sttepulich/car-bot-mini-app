@@ -64,13 +64,17 @@ function loadGarageData() {
             updateGarageDisplay(garageData.cars);
             currentCar = garageData.cars[0]; // Первый автомобиль по умолчанию
         } else {
-            // Демо-данные для тестирования
-            loadDemoData();
+            // Показываем пустое состояние
+            updateGarageDisplay([]);
+            
+            // Демо-данные для тестирования (закомментировано)
+            // loadDemoData();
         }
         
     } catch (e) {
         console.error('❌ Ошибка загрузки данных гаража:', e);
-        loadDemoData();
+        // При ошибке показываем пустое состояние вместо демо-данных
+        updateGarageDisplay([]);
     }
 }
 

@@ -8,6 +8,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Мой гараж</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles-premium.css">
     <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -15,6 +16,25 @@
 <body>
     <!-- Главное меню -->
     <div id="main-screen" class="screen active">
+        
+        <!-- ПУСТОЕ СОСТОЯНИЕ (если нет авто) -->
+        <div class="car-info empty-state" id="empty-garage" style="display: none;">
+            <div class="empty-card">
+                <div class="empty-icon">
+                    <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M5 17h14v-2H5v2zm7-10.5l-3.5 2.5H15l-3-2.5z"/>
+                        <path d="M19 9l1.25-2.75L23 5l-2.75-1.25L19 1l-1.25 2.75L15 5l2.75 1.25z"/>
+                        <path d="M9 11.5l-1.25-2.75L5 7.5l2.75-1.25L9 3.5l1.25 2.75L13 7.5l-2.75 1.25z"/>
+                    </svg>
+                </div>
+                <h3>Добавьте первый автомобиль</h3>
+                <p>Начните управлять вашим гаражом, добавив автомобиль по VIN номеру или вручную</p>
+                <button class="btn-primary" onclick="showScreen('vin-screen')">
+                    Добавить автомобиль
+                </button>
+            </div>
+        </div>
+        
         <div class="header">
             <h1>🚗 Мой гараж</h1>
             <p class="subtitle">Управление автомобилями</p>

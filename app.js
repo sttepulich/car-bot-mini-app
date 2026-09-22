@@ -1886,10 +1886,10 @@ function selectCarFromList(carIndex) {
 }
 
 // Переопределяем showScreen чтобы обновлять список при открытии
-const originalShowScreen = showScreen;
+const originalShowScreenGarage = showScreen;
 showScreen = function(screenId) {
     if (screenId === 'garage-list-screen') {
         showGarageList();
     }
-    originalShowScreen(screenId);
+    originalShowScreenGarage(screenId);
 };

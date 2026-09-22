@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Авто Ассистент</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        /* Встроенные стили */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #ffffff;
+            color: #000000;
+            line-height: 1.6;
+            padding: 16px;
+        }
+        .header { margin-bottom: 24px; }
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle { color: #999; font-size: 14px; }
+        .car-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            border-radius: 16px;
+            padding: 20px;
+            color: white;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .car-icon { font-size: 48px; }
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .menu-item {
+            background: #f4f4f5;
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .menu-item:active { transform: scale(0.98); }
+        .menu-icon { font-size: 32px; margin-bottom: 8px; }
+        .menu-text h3 { font-size: 15px; font-weight: 600; }
+        .menu-text p { font-size: 12px; color: #999; }
+        .screen { display: none; }
+        .screen.active { display: block; }
+        .btn-back {
+            background: none;
+            border: none;
+            font-size: 16px;
+            color: #3b82f6;
+            cursor: pointer;
+            padding: 8px 0;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .calculator-form {
+            background: #f4f4f5;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        .form-group { margin-bottom: 16px; }
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #666;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            font-size: 16px;
+            background: white;
+        }
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+            padding: 14px 24px;
+            width: 100%;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .result-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 16px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-left: 4px solid #10b981;
+        }
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f4f4f5;
+        }
+        .result-item:last-child { border-bottom: none; }
+    </style>
+</head>
+<body>
+    <!-- Главный экран -->
+    <div id="main-screen" class="screen active">
+        <div class="header">
+            <h1>🚗 Авто Ассистент</h1>
+            <p class="subtitle">Все для вашего автомобиля</p>
+        </div>
+
+        <div class="car-card">
+            <div class="car-icon">🚙</div>
+            <div>
+                <h3>Toyota Camry (2020)</h3>
+                <p>Бензин, 2.5л • 45,000 км</p>
+            </div>
+        </div>
+
+        <div class="menu-grid">
+            <div class="menu-item" onclick="showScreen('fuel-screen')">
+                <div class="menu-icon">⛽</div>
+                <div class="menu-text">
+                    <h3>Калькулятор топлива</h3>
+                    <p>Расчет расхода</p>
+                </div>
+            </div>
+
+            <div class="menu-item" onclick="showScreen('tire-screen')">
+                <div class="menu-icon">🛞</div>
+                <div class="menu-text">
+                    <h3>Калькулятор шин</h3>
+                    <p>Подбор размеров</p>
+                </div>
+            </div>
+
+            <div class="menu-item" onclick="alert('📊 Анализ расхода - в разработке')">
+                <div class="menu-icon">📊</div>
+                <div class="menu-text">
+                    <h3>Анализ расхода</h3>
+                    <p>Статистика</p>
+                </div>
+            </div>
+
+            <div class="menu-item" onclick="alert('⏰ Напоминания - в разработке')">
+                <div class="menu-icon">⏰</div>
+                <div class="menu-text">
+                    <h3>Напоминания</h3>
+                    <p>ТО, страховка</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Калькулятор топлива -->
+    <div id="fuel-screen" class="screen">
+        <button class="btn-back" onclick="showScreen('main-screen')">← Назад</button>
+        <div class="header">
+            <h2>Калькулятор топлива</h2>
+        </div>
+
+        <div class="calculator-form">
+            <div class="form-group">
+                <label>Расстояние (км)</label>
+                <input type="number" id="fuel-distance" placeholder="100" value="100">
+            </div>
+
+            <div class="form-group">
+                <label>Расход (л/100км)</label>
+                <input type="number" id="fuel-consumption" placeholder="7.5" step="0.1" value="7.5">
+            </div>
+
+            <div class="form-group">
+                <label>Цена топлива (₽/л)</label>
+                <input type="number" id="fuel-price" placeholder="55" value="55">
+            </div>
+
+            <button class="btn-primary" onclick="calculateFuel()">Рассчитать</button>
+        </div>
+
+        <div class="result-card" id="fuel-result" style="display: none;">
+            <h3>Результаты:</h3>
+            <div class="result-item">
+                <span>Потребуется топлива:</span>
+                <strong id="fuel-needed">-</strong>
+            </div>
+            <div class="result-item">
+                <span>Стоимость поездки:</span>
+                <strong id="fuel-cost">-</strong>
+            </div>
+            <div class="result-item">
+                <span>Стоимость 1 км:</span>
+                <strong id="fuel-cost-per-km">-</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- Калькулятор шин -->
+    <div id="tire-screen" class="screen">
+        <button class="btn-back" onclick="showScreen('main-screen')">← Назад</button>
+        <div class="header">
+            <h2>Калькулятор шин</h2>
+            <p class="subtitle">Сравните размеры шин</p>
+        </div>
+        <p style="text-align: center; margin-top: 50px; color: #999;">
+            Функция в разработке
+        </p>
+    </div>
+
+    <script>
+        // Telegram Web App API
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+
+        // Переключение экранов
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+            
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('light');
+            }
+        }
+
+        // Калькулятор топлива
+        function calculateFuel() {
+            const distance = parseFloat(document.getElementById('fuel-distance').value);
+            const consumption = parseFloat(document.getElementById('fuel-consumption').value);
+            const price = parseFloat(document.getElementById('fuel-price').value);
+
+            if (!distance || !consumption || !price) {
+                alert('Заполните все поля!');
+                return;
+            }
+
+            const fuelNeeded = (distance * consumption / 100).toFixed(2);
+            const totalCost = (fuelNeeded * price).toFixed(2);
+            const costPerKm = (totalCost / distance).toFixed(2);
+
+            document.getElementById('fuel-needed').textContent = `${fuelNeeded} л`;
+            document.getElementById('fuel-cost').textContent = `${totalCost} ₽`;
+            document.getElementById('fuel-cost-per-km').textContent = `${costPerKm} ₽/км`;
+
+            document.getElementById('fuel-result').style.display = 'block';
+
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.notificationOccurred('success');
+            }
+        }
+
+        tg.ready();
+        console.log('🚗 Авто Ассистент Mini App загружен');
+    </script>
+</body>
+</html>

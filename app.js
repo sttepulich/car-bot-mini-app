@@ -1199,3 +1199,697 @@ function resetAllData() {
         tg.HapticFeedback.notificationOccurred('success');
     }
 }
+
+
+// ========== ДОБАВЛЕНИЕ АВТОМОБИЛЯ ВРУЧНУЮ ==========
+
+function saveNewCar() {
+    // Получаем значения из формы
+    const brand = document.getElementById('add-brand').value.trim();
+    const model = document.getElementById('add-model').value.trim();
+    const year = document.getElementById('add-year').value.trim();
+    const vin = document.getElementById('add-vin').value.trim().toUpperCase();
+    const licensePlate = document.getElementById('add-license-plate').value.trim().toUpperCase();
+    const engineType = document.getElementById('add-engine-type').value;
+    const engineVolume = document.getElementById('add-engine-volume').value.trim();
+    const mileage = document.getElementById('add-mileage').value.trim();
+    
+    // Валидация обязательных полей
+    if (!brand) {
+        tg.showAlert('❌ Введите марку автомобиля');
+        return;
+    }
+    
+    if (!model) {
+        tg.showAlert('❌ Введите модель автомобиля');
+        return;
+    }
+    
+    if (!mileage || parseInt(mileage) < 0) {
+        tg.showAlert('❌ Введите корректный пробег');
+        return;
+    }
+    
+    // Валидация VIN если указан
+    if (vin && vin.length !== 17) {
+        tg.showAlert('❌ VIN номер должен содержать 17 символов');
+        return;
+    }
+    
+    // Формируем данные автомобиля
+    const carData = {
+        brand: brand,
+        model: model,
+        year: year ? parseInt(year) : null,
+        vin: vin || null,
+        license_plate: licensePlate || null,
+        engine_type: engineType || null,
+        engine_volume: engineVolume ? parseFloat(engineVolume) : null,
+        current_mileage: parseInt(mileage)
+    };
+    
+    console.log('💾 Сохранение нового авто:', carData);
+    
+    // Показываем индикатор загрузки
+    tg.MainButton.setText('💾 Сохранение...');
+    tg.MainButton.show();
+    tg.MainButton.disable();
+    
+    // Отправляем данные через WebApp API
+    tg.sendData(JSON.stringify({
+        action: 'add_car_manual',
+        car: carData
+    }));
+    
+    // Сохраняем в localStorage
+    if (!garageData) {
+        garageData = { cars: [] };
+    }
+    
+    if (!garageData.cars) {
+        garageData.cars = [];
+    }
+    
+    // Добавляем новый автомобиль
+    carData.id = Date.now(); // Временный ID
+    garageData.cars.push(carData);
+    localStorage.setItem('garageData', JSON.stringify(garageData));
+    
+    // Обновляем отображение
+    updateGarageDisplay(garageData.cars);
+    currentCar = carData;
+    
+    // Очищаем форму
+    clearAddCarForm();
+    
+    // Показываем уведомление
+    if (tg.HapticFeedback) {
+        tg.HapticFeedback.notificationOccurred('success');
+    }
+    
+    tg.showPopup({
+        title: '✅ Успешно!',
+        message: `Автомобиль ${brand} ${model} добавлен в гараж`,
+        buttons: [{id: 'ok', type: 'ok'}]
+    }, function() {
+        // Возвращаемся на главный экран
+        showScreen('main-screen');
+    });
+    
+    // Через 2 секунды закрываем Mini App
+    setTimeout(() => {
+        tg.close();
+    }, 2000);
+}
+
+// Очистка формы добавления авто
+function clearAddCarForm() {
+    document.getElementById('add-brand').value = '';
+    document.getElementById('add-model').value = '';
+    document.getElementById('add-year').value = '';
+    document.getElementById('add-vin').value = '';
+    document.getElementById('add-license-plate').value = '';
+    document.getElementById('add-engine-type').value = '';
+    document.getElementById('add-engine-volume').value = '';
+    document.getElementById('add-mileage').value = '';
+}
+
+
+// ========== РЕДАКТИРОВАНИЕ АВТОМОБИЛЯ ==========
+
+// Открытие экрана редактирования с загрузкой данных
+function openEditCarScreen() {
+    if (!currentCar) {
+        tg.showAlert('❌ Автомобиль не выбран');
+        return;
+    }
+    
+    // Заполняем форму данными текущего авто
+    document.getElementById('edit-car-id').value = currentCar.id || '';
+    document.getElementById('edit-brand').value = currentCar.brand || '';
+    document.getElementById('edit-model').value = currentCar.model || '';
+    document.getElementById('edit-year').value = currentCar.year || '';
+    document.getElementById('edit-license-plate').value = currentCar.license_plate || '';
+    document.getElementById('edit-engine-type').value = currentCar.engine_type || '';
+    document.getElementById('edit-engine-volume').value = currentCar.engine_volume || '';
+    document.getElementById('edit-mileage').value = currentCar.current_mileage || '';
+    
+    // Показываем VIN если есть
+    if (currentCar.vin) {
+        document.getElementById('edit-vin').value = currentCar.vin;
+        document.getElementById('edit-vin-group').style.display = 'block';
+    } else {
+        document.getElementById('edit-vin-group').style.display = 'none';
+    }
+    
+    // Обновляем заголовок
+    const carName = `${currentCar.brand} ${currentCar.model}`;
+    document.getElementById('edit-car-title').textContent = carName;
+    
+    // Переходим на экран редактирования
+    showScreen('edit-car-screen');
+}
+
+// Сохранение изменений автомобиля
+function saveCarChanges() {
+    const carId = document.getElementById('edit-car-id').value;
+    const brand = document.getElementById('edit-brand').value.trim();
+    const model = document.getElementById('edit-model').value.trim();
+    const year = document.getElementById('edit-year').value.trim();
+    const licensePlate = document.getElementById('edit-license-plate').value.trim().toUpperCase();
+    const engineType = document.getElementById('edit-engine-type').value;
+    const engineVolume = document.getElementById('edit-engine-volume').value.trim();
+    const mileage = document.getElementById('edit-mileage').value.trim();
+    
+    // Валидация
+    if (!brand) {
+        tg.showAlert('❌ Введите марку автомобиля');
+        return;
+    }
+    
+    if (!model) {
+        tg.showAlert('❌ Введите модель автомобиля');
+        return;
+    }
+    
+    if (!mileage || parseInt(mileage) < 0) {
+        tg.showAlert('❌ Введите корректный пробег');
+        return;
+    }
+    
+    // Формируем данные для обновления
+    const updatedCarData = {
+        id: carId,
+        brand: brand,
+        model: model,
+        year: year ? parseInt(year) : null,
+        license_plate: licensePlate || null,
+        engine_type: engineType || null,
+        engine_volume: engineVolume ? parseFloat(engineVolume) : null,
+        current_mileage: parseInt(mileage)
+    };
+    
+    console.log('💾 Обновление авто:', updatedCarData);
+    
+    // Показываем индикатор загрузки
+    tg.MainButton.setText('💾 Сохранение...');
+    tg.MainButton.show();
+    tg.MainButton.disable();
+    
+    // Отправляем данные через WebApp API
+    tg.sendData(JSON.stringify({
+        action: 'update_car',
+        car: updatedCarData
+    }));
+    
+    // Обновляем в localStorage
+    if (garageData && garageData.cars) {
+        const carIndex = garageData.cars.findIndex(c => c.id == carId);
+        if (carIndex !== -1) {
+            garageData.cars[carIndex] = { ...garageData.cars[carIndex], ...updatedCarData };
+            localStorage.setItem('garageData', JSON.stringify(garageData));
+            
+            // Обновляем currentCar
+            currentCar = garageData.cars[carIndex];
+            
+            // Обновляем отображение
+            updateGarageDisplay(garageData.cars);
+        }
+    }
+    
+    // Показываем уведомление
+    if (tg.HapticFeedback) {
+        tg.HapticFeedback.notificationOccurred('success');
+    }
+    
+    tg.showPopup({
+        title: '✅ Сохранено!',
+        message: `Данные автомобиля ${brand} ${model} обновлены`,
+        buttons: [{id: 'ok', type: 'ok'}]
+    }, function() {
+        showScreen('main-screen');
+    });
+    
+    // Через 2 секунды закрываем Mini App
+    setTimeout(() => {
+        tg.close();
+    }, 2000);
+}
+
+// Подтверждение удаления автомобиля
+function confirmDeleteCar() {
+    if (!currentCar) {
+        tg.showAlert('❌ Автомобиль не выбран');
+        return;
+    }
+    
+    const carName = `${currentCar.brand} ${currentCar.model}`;
+    
+    // Двойное подтверждение для безопасности
+    tg.showConfirm(
+        `⚠️ Вы уверены, что хотите удалить ${carName}?\n\nЭто действие нельзя отменить. Все связанные данные (ТО, расходы, поломки) также будут удалены.`,
+        function(confirmed) {
+            if (confirmed) {
+                // Второе подтверждение
+                tg.showConfirm(
+                    `🗑️ Последнее предупреждение!\n\nВы действительно хотите удалить ${carName} и ВСЕ его данные?`,
+                    function(finalConfirmed) {
+                        if (finalConfirmed) {
+                            deleteCarNow();
+                        }
+                    }
+                );
+            }
+        }
+    );
+}
+
+// Удаление автомобиля
+function deleteCarNow() {
+    const carId = document.getElementById('edit-car-id').value;
+    
+    if (!carId) {
+        tg.showAlert('❌ ID автомобиля не найден');
+        return;
+    }
+    
+    console.log('🗑️ Удаление авто ID:', carId);
+    
+    // Показываем индикатор загрузки
+    tg.MainButton.setText('🗑️ Удаление...');
+    tg.MainButton.show();
+    tg.MainButton.disable();
+    
+    // Отправляем данные через WebApp API
+    tg.sendData(JSON.stringify({
+        action: 'delete_car',
+        car_id: carId
+    }));
+    
+    // Удаляем из localStorage
+    if (garageData && garageData.cars) {
+        garageData.cars = garageData.cars.filter(c => c.id != carId);
+        localStorage.setItem('garageData', JSON.stringify(garageData));
+        
+        // Обновляем отображение
+        if (garageData.cars.length > 0) {
+            currentCar = garageData.cars[0];
+            updateGarageDisplay(garageData.cars);
+        } else {
+            currentCar = null;
+            updateGarageDisplay([]);
+        }
+    }
+    
+    // Показываем уведомление
+    if (tg.HapticFeedback) {
+        tg.HapticFeedback.notificationOccurred('warning');
+    }
+    
+    tg.showPopup({
+        title: '🗑️ Удалено',
+        message: 'Автомобиль и все связанные данные удалены',
+        buttons: [{id: 'ok', type: 'ok'}]
+    }, function() {
+        showScreen('main-screen');
+    });
+    
+    // Через 2 секунды закрываем Mini App
+    setTimeout(() => {
+        tg.close();
+    }, 2000);
+}
+
+
+// ========== ДОБАВЛЕНИЕ РАСХОДОВ ==========
+
+// Обновление подсказки при выборе категории
+function updateExpenseCategoryHint() {
+    const category = document.getElementById('expense-category').value;
+    const hintElement = document.getElementById('expense-hint');
+    const mileageGroup = document.getElementById('expense-mileage-group');
+    
+    const hints = {
+        'Топливо': 'Укажите сумму заправки и пробег для расчёта среднего расхода',
+        'ТО': 'Например: Замена масла, фильтров, свечей',
+        'Ремонт': 'Опишите что было отремонтировано',
+        'Страховка': 'ОСАГО, КАСКО или другая страховка',
+        'Парковка': 'Платная парковка или абонемент',
+        'Мойка': 'Автомойка или химчистка',
+        'Штрафы': 'Штрафы ГИБДД',
+        'Шины': 'Покупка или замена шин',
+        'Запчасти': 'Покупка запчастей',
+        'Прочее': 'Другие расходы на автомобиль'
+    };
+    
+    if (hints[category]) {
+        hintElement.textContent = hints[category];
+    } else {
+        hintElement.textContent = 'Краткое описание расхода';
+    }
+    
+    // Показываем поле пробега для топлива
+    if (category === 'Топливо') {
+        mileageGroup.style.display = 'block';
+        // Автоматически подставляем текущий пробег
+        if (currentCar && currentCar.current_mileage) {
+            document.getElementById('expense-mileage').value = currentCar.current_mileage;
+        }
+    } else {
+        mileageGroup.style.display = 'none';
+    }
+}
+
+// Сохранение расхода
+function saveExpense() {
+    const category = document.getElementById('expense-category').value;
+    const amount = document.getElementById('expense-amount').value.trim();
+    const date = document.getElementById('expense-date').value;
+    const description = document.getElementById('expense-description').value.trim();
+    const mileage = document.getElementById('expense-mileage').value.trim();
+    
+    // Валидация
+    if (!category) {
+        tg.showAlert('❌ Выберите категорию расхода');
+        return;
+    }
+    
+    if (!amount || parseFloat(amount) <= 0) {
+        tg.showAlert('❌ Введите корректную сумму');
+        return;
+    }
+    
+    // Формируем данные расхода
+    const expenseData = {
+        category: category,
+        amount: parseFloat(amount),
+        expense_date: date || new Date().toISOString().split('T')[0],
+        description: description || '',
+        car_id: currentCar ? currentCar.id : null
+    };
+    
+    // Добавляем пробег для топлива
+    if (category === 'Топливо' && mileage) {
+        expenseData.mileage = parseInt(mileage);
+    }
+    
+    console.log('💰 Сохранение расхода:', expenseData);
+    
+    // Показываем индикатор загрузки
+    tg.MainButton.setText('💾 Сохранение...');
+    tg.MainButton.show();
+    tg.MainButton.disable();
+    
+    // Отправляем данные через WebApp API
+    tg.sendData(JSON.stringify({
+        action: 'add_expense',
+        data: expenseData
+    }));
+    
+    // Очищаем форму
+    clearExpenseForm();
+    
+    // Показываем уведомление
+    if (tg.HapticFeedback) {
+        tg.HapticFeedback.notificationOccurred('success');
+    }
+    
+    const categoryEmoji = {
+        'Топливо': '⛽',
+        'ТО': '🔧',
+        'Ремонт': '🛠️',
+        'Страховка': '📋',
+        'Парковка': '🅿️',
+        'Мойка': '💦',
+        'Штрафы': '🚔',
+        'Шины': '🛞',
+        'Запчасти': '⚙️',
+        'Прочее': '📦'
+    };
+    
+    const emoji = categoryEmoji[category] || '💰';
+    
+    tg.showPopup({
+        title: '✅ Расход добавлен!',
+        message: `${emoji} ${category}: ${amount} ₽`,
+        buttons: [{id: 'ok', type: 'ok'}]
+    }, function() {
+        showScreen('main-screen');
+    });
+    
+    // Через 2 секунды закрываем Mini App
+    setTimeout(() => {
+        tg.close();
+    }, 2000);
+}
+
+// Очистка формы расходов
+function clearExpenseForm() {
+    document.getElementById('expense-category').value = '';
+    document.getElementById('expense-amount').value = '';
+    document.getElementById('expense-date').value = '';
+    document.getElementById('expense-description').value = '';
+    document.getElementById('expense-mileage').value = '';
+    document.getElementById('expense-mileage-group').style.display = 'none';
+    document.getElementById('expense-hint').textContent = 'Краткое описание расхода';
+}
+
+// Открытие экрана добавления расхода
+function openAddExpenseScreen() {
+    // Устанавливаем сегодняшнюю дату по умолчанию
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('expense-date').value = today;
+    
+    showScreen('add-expense-screen');
+}
+
+
+// ========== ДОБАВЛЕНИЕ ТО (ТЕХОБСЛУЖИВАНИЕ) ==========
+
+function saveMaintenance() {
+    const serviceType = document.getElementById('maintenance-type').value;
+    const mileage = document.getElementById('maintenance-mileage').value.trim();
+    const date = document.getElementById('maintenance-date').value;
+    const cost = document.getElementById('maintenance-cost').value.trim();
+    const nextService = document.getElementById('maintenance-next').value.trim();
+    const notes = document.getElementById('maintenance-notes').value.trim();
+    
+    // Валидация
+    if (!serviceType) {
+        tg.showAlert('❌ Выберите тип обслуживания');
+        return;
+    }
+    
+    if (!mileage || parseInt(mileage) < 0) {
+        tg.showAlert('❌ Введите корректный пробег');
+        return;
+    }
+    
+    const maintenanceData = {
+        service_type: serviceType,
+        mileage: parseInt(mileage),
+        service_date: date || new Date().toISOString().split('T')[0],
+        cost: cost ? parseFloat(cost) : null,
+        next_service_mileage: nextService ? parseInt(nextService) : null,
+        notes: notes || '',
+        car_id: currentCar ? currentCar.id : null
+    };
+    
+    console.log('🔧 Сохранение ТО:', maintenanceData);
+    
+    tg.MainButton.setText('💾 Сохранение...');
+    tg.MainButton.show();
+    tg.MainButton.disable();
+    
+    tg.sendData(JSON.stringify({
+        action: 'add_maintenance',
+        data: maintenanceData
+    }));
+    
+    if (tg.HapticFeedback) {
+        tg.HapticFeedback.notificationOccurred('success');
+    }
+    
+    tg.showPopup({
+        title: '✅ ТО добавлено!',
+        message: `${serviceType} на ${mileage} км`,
+        buttons: [{id: 'ok', type: 'ok'}]
+    }, function() {
+        showScreen('main-screen');
+    });
+    
+    setTimeout(() => { tg.close(); }, 2000);
+}
+
+// ========== ДОБАВЛЕНИЕ ПОЛОМОК ==========
+
+// Переключение полей при изменении статуса
+document.addEventListener('DOMContentLoaded', function() {
+    const issueStatus = document.getElementById('issue-status');
+    if (issueStatus) {
+        issueStatus.addEventListener('change', function() {
+            const costGroup = document.getElementById('issue-cost-group');
+            const solutionGroup = document.getElementById('issue-solution-group');
+            
+            if (this.value === 'resolved') {
+                costGroup.style.display = 'block';
+                solutionGroup.style.display = 'block';
+            } else {
+                costGroup.style.display = 'none';
+                solutionGroup.style.display = 'none';
+            }
+        });
+    }
+});
+
+function saveIssue() {
+    const title = document.getElementById('issue-title').value.trim();
+    const description = document.getElementById('issue-description').value.trim();
+    const status = document.getElementById('issue-status').value;
+    const cost = document.getElementById('issue-cost').value.trim();
+    const solution = document.getElementById('issue-solution').value.trim();
+    
+    // Валидация
+    if (!title) {
+        tg.showAlert('❌ Введите название проблемы');
+        return;
+    }
+    
+    if (!description) {
+        tg.showAlert('❌ Опишите симптомы');
+        return;
+    }
+    
+    const issueData = {
+        title: title,
+        description: description,
+        status: status,
+        cost: (status === 'resolved' && cost) ? parseFloat(cost) : null,
+        solution: (status === 'resolved' && solution) ? solution : null,
+        car_id: currentCar ? currentCar.id : null
+    };
+    
+    console.log('🛠️ Сохранение поломки:', issueData);
+    
+    tg.MainButton.setText('💾 Сохранение...');
+    tg.MainButton.show();
+    tg.MainButton.disable();
+    
+    tg.sendData(JSON.stringify({
+        action: 'add_issue',
+        data: issueData
+    }));
+    
+    if (tg.HapticFeedback) {
+        tg.HapticFeedback.notificationOccurred('success');
+    }
+    
+    const statusEmoji = status === 'resolved' ? '✅' : '🔴';
+    
+    tg.showPopup({
+        title: `${statusEmoji} Поломка добавлена!`,
+        message: title,
+        buttons: [{id: 'ok', type: 'ok'}]
+    }, function() {
+        showScreen('main-screen');
+    });
+    
+    setTimeout(() => { tg.close(); }, 2000);
+}
+
+
+// ========== СПИСОК АВТОМОБИЛЕЙ И ПЕРЕКЛЮЧЕНИЕ ==========
+
+// Показать список всех автомобилей
+function showGarageList() {
+    const container = document.getElementById('cars-list-container');
+    
+    if (!garageData || !garageData.cars || garageData.cars.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state" style="text-align: center; padding: 40px 20px;">
+                <p style="color: #888; margin-bottom: 20px;">У вас пока нет автомобилей</p>
+            </div>
+        `;
+        return;
+    }
+    
+    // Создаем карточки для каждого авто
+    let html = '';
+    
+    garageData.cars.forEach((car, index) => {
+        const isActive = currentCar && currentCar.id === car.id;
+        const carName = `${car.brand} ${car.model}`;
+        const yearInfo = car.year ? `${car.year} г.` : '';
+        const mileageInfo = car.current_mileage ? `${car.current_mileage.toLocaleString()} км` : '';
+        const engineInfo = car.engine_type || '';
+        const volumeInfo = car.engine_volume ? `${car.engine_volume}л` : '';
+        
+        html += `
+            <div class="car-list-item glass-card ${isActive ? 'active-car' : ''}" onclick="selectCarFromList(${index})">
+                <div class="car-list-icon gradient-primary">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                        <path d="M5 17h14v-2H5v2z"/>
+                        <path d="M16 6l-4-4-4 4"/>
+                        <path d="M12 2v8"/>
+                        <circle cx="7" cy="18" r="2"/>
+                        <circle cx="17" cy="18" r="2"/>
+                    </svg>
+                </div>
+                <div class="car-list-details">
+                    <div class="car-list-header">
+                        <h4>${carName}</h4>
+                        ${isActive ? '<span class="active-badge">Активный</span>' : ''}
+                    </div>
+                    <div class="car-list-specs">
+                        ${yearInfo ? `<span>${yearInfo}</span>` : ''}
+                        ${engineInfo ? `<span>${engineInfo} ${volumeInfo}</span>` : ''}
+                    </div>
+                    <div class="car-list-mileage">
+                        📏 ${mileageInfo || 'Пробег не указан'}
+                    </div>
+                </div>
+                ${isActive ? '<div class="check-icon">✓</div>' : ''}
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+    showScreen('garage-list-screen');
+}
+
+// Выбрать автомобиль из списка
+function selectCarFromList(carIndex) {
+    if (!garageData || !garageData.cars || !garageData.cars[carIndex]) {
+        tg.showAlert('❌ Автомобиль не найден');
+        return;
+    }
+    
+    // Устанавливаем текущий автомобиль
+    currentCar = garageData.cars[carIndex];
+    
+    // Обновляем отображение
+    updateGarageDisplay(garageData.cars);
+    
+    // Вибрация
+    if (tg.HapticFeedback) {
+        tg.HapticFeedback.impactOccurred('light');
+    }
+    
+    // Показываем уведомление
+    tg.showPopup({
+        title: '✅ Автомобиль выбран',
+        message: `${currentCar.brand} ${currentCar.model}`,
+        buttons: [{id: 'ok', type: 'ok'}]
+    }, function() {
+        showScreen('main-screen');
+    });
+}
+
+// Переопределяем showScreen чтобы обновлять список при открытии
+const originalShowScreen = showScreen;
+showScreen = function(screenId) {
+    if (screenId === 'garage-list-screen') {
+        showGarageList();
+    }
+    originalShowScreen(screenId);
+};

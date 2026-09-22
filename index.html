@@ -28,9 +28,23 @@
                     </svg>
                 </div>
                 <h3>Добавьте первый автомобиль</h3>
-                <p>Начните управлять вашим гаражом, добавив автомобиль по VIN номеру или вручную</p>
-                <button class="btn-primary" onclick="showScreen('vin-screen')">
-                    Добавить автомобиль
+                <p>Начните управлять вашим гаражом</p>
+                
+                <button class="btn-primary" onclick="showScreen('add-car-screen')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    Добавить вручную
+                </button>
+                
+                <button class="btn-secondary" onclick="showScreen('vin-screen')" style="margin-top: 12px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                        <line x1="12" y1="22.08" x2="12" y2="12"/>
+                    </svg>
+                    Добавить по VIN
                 </button>
             </div>
         </div>
@@ -41,13 +55,16 @@
         </div>
 
         <div class="car-info" id="car-info">
-            <div class="car-card">
+            <div class="car-card" onclick="showScreen('garage-list-screen')">
                 <div class="car-icon">🚙</div>
                 <div class="car-details">
                     <h3 id="car-name">Загрузка...</h3>
                     <p id="car-specs">-</p>
                 </div>
-                <button class="btn-icon" onclick="showScreen('edit-car-screen')">📝</button>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn-icon" onclick="event.stopPropagation(); openEditCarScreen()">📝</button>
+                    <button class="btn-icon" onclick="event.stopPropagation(); showScreen('garage-list-screen')" title="Сменить авто">🔄</button>
+                </div>
             </div>
         </div>
 
@@ -154,6 +171,19 @@
                 <div class="menu-text">
                     <h3>История поломок</h3>
                     <p>Все проблемы авто</p>
+                </div>
+            </div>
+
+            <div class="menu-item" onclick="openAddExpenseScreen()">
+                <div class="menu-icon-svg" style="background: linear-gradient(135deg, #f59e0b, #fbbf24);">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+                        <line x1="12" y1="1" x2="12" y2="23"/>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                    </svg>
+                </div>
+                <div class="menu-text">
+                    <h3>Добавить расход</h3>
+                    <p>Топливо, ТО, ремонт...</p>
                 </div>
             </div>
 
@@ -1330,34 +1360,211 @@
         </div>
     </div>
 
+    <!-- ЭКРАН: Список всех автомобилей -->
+    <div id="garage-list-screen" class="screen">
+        <div class="header">
+            <button class="btn-back" onclick="showScreen('main-screen')">← Назад</button>
+            <h2>Мои автомобили</h2>
+            <p class="subtitle">Выберите автомобиль или добавьте новый</p>
+        </div>
+
+        <div id="cars-list-container" class="cars-list">
+            <!-- Список будет заполнен через JS -->
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 24px;">
+            <button class="btn-primary" onclick="showScreen('add-car-screen')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                Добавить новый автомобиль
+            </button>
+            
+            <button class="btn-secondary" onclick="showScreen('vin-screen')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                    <line x1="12" y1="22.08" x2="12" y2="12"/>
+                </svg>
+                Добавить по VIN
+            </button>
+        </div>
+    </div>
+
+    <!-- ЭКРАН: Добавить автомобиль вручную -->
+    <div id="add-car-screen" class="screen">
+        <div class="header">
+            <button class="btn-back" onclick="showScreen('main-screen')">← Назад</button>
+            <h2>Добавить автомобиль</h2>
+            <p class="subtitle">Заполните данные вручную</p>
+        </div>
+
+        <div class="calculator-form">
+            <!-- Марка -->
+            <div class="form-group">
+                <label>Марка <span style="color: #ef4444;">*</span></label>
+                <input 
+                    type="text" 
+                    id="add-brand" 
+                    placeholder="Toyota, Lada, BMW..."
+                    required>
+                <small style="color: #888;">Обязательное поле</small>
+            </div>
+
+            <!-- Модель -->
+            <div class="form-group">
+                <label>Модель <span style="color: #ef4444;">*</span></label>
+                <input 
+                    type="text" 
+                    id="add-model" 
+                    placeholder="Camry, Vesta, X5..."
+                    required>
+                <small style="color: #888;">Обязательное поле</small>
+            </div>
+
+            <!-- Год выпуска -->
+            <div class="form-group">
+                <label>Год выпуска</label>
+                <input 
+                    type="number" 
+                    id="add-year" 
+                    placeholder="2020"
+                    min="1900"
+                    max="2026">
+            </div>
+
+            <!-- VIN (необязательно) -->
+            <div class="form-group">
+                <label>VIN номер (необязательно)</label>
+                <input 
+                    type="text" 
+                    id="add-vin" 
+                    placeholder="WVWZZZ1KZDW123456"
+                    maxlength="17"
+                    style="text-transform: uppercase; font-family: monospace;">
+                <small style="color: #888;">17 символов</small>
+            </div>
+
+            <!-- Госномер -->
+            <div class="form-group">
+                <label>Государственный номер</label>
+                <input 
+                    type="text" 
+                    id="add-license-plate" 
+                    placeholder="А123БВ777"
+                    style="text-transform: uppercase;">
+            </div>
+
+            <!-- Тип двигателя -->
+            <div class="form-group">
+                <label>Тип двигателя</label>
+                <select id="add-engine-type">
+                    <option value="">Выберите тип</option>
+                    <option value="Бензин">Бензин</option>
+                    <option value="Дизель">Дизель</option>
+                    <option value="Гибрид">Гибрид</option>
+                    <option value="Электро">Электро</option>
+                    <option value="Газ">Газ</option>
+                </select>
+            </div>
+
+            <!-- Объём двигателя -->
+            <div class="form-group">
+                <label>Объём двигателя (л)</label>
+                <input 
+                    type="number" 
+                    id="add-engine-volume" 
+                    placeholder="2.5"
+                    step="0.1"
+                    min="0"
+                    max="10">
+            </div>
+
+            <!-- Текущий пробег -->
+            <div class="form-group">
+                <label>Текущий пробег (км) <span style="color: #ef4444;">*</span></label>
+                <input 
+                    type="number" 
+                    id="add-mileage" 
+                    placeholder="50000"
+                    min="0"
+                    required>
+                <small style="color: #888;">Обязательное поле</small>
+            </div>
+
+            <!-- Кнопки -->
+            <button class="btn-primary" onclick="saveNewCar()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                    <polyline points="17 21 17 13 7 13 7 21"/>
+                    <polyline points="7 3 7 8 15 8"/>
+                </svg>
+                Сохранить автомобиль
+            </button>
+            
+            <button class="btn-secondary" onclick="showScreen('main-screen')" style="margin-top: 12px;">
+                Отмена
+            </button>
+        </div>
+
+        <div class="info-card" style="margin-top: 24px;">
+            <h4>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 8px;">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 16v-4"/>
+                    <path d="M12 8h.01"/>
+                </svg>
+                Совет
+            </h4>
+            <p>Если у вас есть VIN номер, используйте функцию "Добавить по VIN" - многие данные заполнятся автоматически!</p>
+        </div>
+    </div>
+
     <!-- ЭКРАН: Редактор автомобиля -->
     <div id="edit-car-screen" class="screen">
         <div class="header">
             <button class="btn-back" onclick="showScreen('main-screen')">← Назад</button>
-            <h2>✏️ Редактировать авто</h2>
+            <h2>Редактировать авто</h2>
+            <p class="subtitle" id="edit-car-title">Изменение данных автомобиля</p>
         </div>
 
         <div class="edit-car-form">
+            <!-- ID автомобиля (скрытое поле) -->
+            <input type="hidden" id="edit-car-id">
+
+            <!-- Марка -->
             <div class="form-group">
-                <label>Марка</label>
-                <input type="text" id="edit-brand" placeholder="Toyota">
+                <label>Марка <span style="color: #ef4444;">*</span></label>
+                <input type="text" id="edit-brand" placeholder="Toyota" required>
             </div>
 
+            <!-- Модель -->
             <div class="form-group">
-                <label>Модель</label>
-                <input type="text" id="edit-model" placeholder="Camry">
+                <label>Модель <span style="color: #ef4444;">*</span></label>
+                <input type="text" id="edit-model" placeholder="Camry" required>
             </div>
 
+            <!-- Год выпуска -->
             <div class="form-group">
-                <label>📅 Год выпуска</label>
-                <input type="number" id="edit-year" placeholder="2020" min="1900" max="2030">
+                <label>Год выпуска</label>
+                <input type="number" id="edit-year" placeholder="2020" min="1900" max="2026">
             </div>
 
+            <!-- VIN (только для чтения если есть) -->
+            <div class="form-group" id="edit-vin-group" style="display: none;">
+                <label>VIN номер</label>
+                <input type="text" id="edit-vin" placeholder="VIN" disabled style="background: rgba(255,255,255,0.05); font-family: monospace;">
+                <small style="color: #888;">VIN номер нельзя изменить</small>
+            </div>
+
+            <!-- Госномер -->
             <div class="form-group">
-                <label>🔢 Госномер</label>
+                <label>Государственный номер</label>
                 <input type="text" id="edit-license-plate" placeholder="А123БВ777" style="text-transform: uppercase;">
             </div>
 
+            <!-- Тип двигателя -->
             <div class="form-group">
                 <label>Тип двигателя</label>
                 <select id="edit-engine-type">
@@ -1370,24 +1577,286 @@
                 </select>
             </div>
 
+            <!-- Объём двигателя -->
             <div class="form-group">
                 <label>Объём двигателя (л)</label>
-                <input type="number" id="edit-engine-volume" placeholder="2.5" step="0.1" min="0">
+                <input type="number" id="edit-engine-volume" placeholder="2.5" step="0.1" min="0" max="10">
             </div>
 
+            <!-- Текущий пробег -->
             <div class="form-group">
-                <label>📏 Текущий пробег (км)</label>
-                <input type="number" id="edit-mileage" placeholder="50000" min="0">
+                <label>Текущий пробег (км) <span style="color: #ef4444;">*</span></label>
+                <input type="number" id="edit-mileage" placeholder="50000" min="0" required>
             </div>
 
-            <div class="form-actions">
+            <!-- Кнопки действий -->
+            <div class="form-actions" style="display: flex; flex-direction: column; gap: 12px; margin-top: 24px;">
                 <button class="btn-primary" onclick="saveCarChanges()">
-                    💾 Сохранить изменения
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                        <polyline points="17 21 17 13 7 13 7 21"/>
+                        <polyline points="7 3 7 8 15 8"/>
+                    </svg>
+                    Сохранить изменения
                 </button>
-                <button class="btn-danger" onclick="confirmDeleteCar()">
-                    🗑️ Удалить автомобиль
+                
+                <button class="btn-secondary" onclick="showScreen('main-screen')">
+                    Отмена
                 </button>
             </div>
+
+            <!-- Опасная зона -->
+            <div class="danger-zone" style="margin-top: 32px; padding: 20px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px;">
+                <h4 style="color: #ef4444; margin: 0 0 8px 0; font-size: 14px; font-weight: 600;">⚠️ Опасная зона</h4>
+                <p style="color: #888; font-size: 13px; margin: 0 0 16px 0;">Удаление автомобиля приведет к удалению всех связанных данных: ТО, расходов, поломок.</p>
+                <button class="btn-danger" onclick="confirmDeleteCar()" style="width: 100%; background: linear-gradient(135deg, #ef4444, #dc2626); border: none; color: white;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6"/>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                        <line x1="10" y1="11" x2="10" y2="17"/>
+                        <line x1="14" y1="11" x2="14" y2="17"/>
+                    </svg>
+                    Удалить автомобиль
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ЭКРАН: Добавить ТО -->
+    <div id="add-maintenance-screen" class="screen">
+        <div class="header">
+            <button class="btn-back" onclick="showScreen('main-screen')">← Назад</button>
+            <h2>Запись ТО</h2>
+            <p class="subtitle">Техническое обслуживание</p>
+        </div>
+
+        <div class="calculator-form">
+            <!-- Тип ТО -->
+            <div class="form-group">
+                <label>Тип обслуживания <span style="color: #ef4444;">*</span></label>
+                <select id="maintenance-type" required>
+                    <option value="">Выберите тип</option>
+                    <option value="Замена масла">Замена масла</option>
+                    <option value="Замена фильтров">Замена фильтров</option>
+                    <option value="Замена свечей">Замена свечей</option>
+                    <option value="Замена ремня ГРМ">Замена ремня ГРМ</option>
+                    <option value="Замена тормозных колодок">Замена тормозных колодок</option>
+                    <option value="Плановое ТО">Плановое ТО</option>
+                    <option value="Другое">Другое</option>
+                </select>
+            </div>
+
+            <!-- Пробег -->
+            <div class="form-group">
+                <label>Пробег на момент ТО (км) <span style="color: #ef4444;">*</span></label>
+                <input type="number" id="maintenance-mileage" placeholder="50000" min="0" required>
+            </div>
+
+            <!-- Дата -->
+            <div class="form-group">
+                <label>Дата проведения</label>
+                <input type="date" id="maintenance-date" max="2026-12-31">
+            </div>
+
+            <!-- Стоимость -->
+            <div class="form-group">
+                <label>Стоимость (₽)</label>
+                <input type="number" id="maintenance-cost" placeholder="3000" min="0" step="0.01">
+            </div>
+
+            <!-- Следующее ТО -->
+            <div class="form-group">
+                <label>Следующее ТО через (км)</label>
+                <input type="number" id="maintenance-next" placeholder="10000" min="0">
+                <small style="color: #888;">Напомним когда подойдет срок</small>
+            </div>
+
+            <!-- Описание -->
+            <div class="form-group">
+                <label>Примечание</label>
+                <textarea id="maintenance-notes" placeholder="Детали обслуживания..." rows="3" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: var(--text-primary); font-family: inherit; resize: vertical;"></textarea>
+            </div>
+
+            <!-- Кнопки -->
+            <button class="btn-primary" onclick="saveMaintenance()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                    <polyline points="17 21 17 13 7 13 7 21"/>
+                    <polyline points="7 3 7 8 15 8"/>
+                </svg>
+                Сохранить запись
+            </button>
+            
+            <button class="btn-secondary" onclick="showScreen('main-screen')" style="margin-top: 12px;">
+                Отмена
+            </button>
+        </div>
+    </div>
+
+    <!-- ЭКРАН: Добавить поломку -->
+    <div id="add-issue-screen" class="screen">
+        <div class="header">
+            <button class="btn-back" onclick="showScreen('main-screen')">← Назад</button>
+            <h2>Добавить поломку</h2>
+            <p class="subtitle">Регистрация неисправности</p>
+        </div>
+
+        <div class="calculator-form">
+            <!-- Название -->
+            <div class="form-group">
+                <label>Проблема <span style="color: #ef4444;">*</span></label>
+                <input type="text" id="issue-title" placeholder="Например: Посторонний шум в двигателе" required>
+            </div>
+
+            <!-- Описание -->
+            <div class="form-group">
+                <label>Описание симптомов <span style="color: #ef4444;">*</span></label>
+                <textarea id="issue-description" placeholder="Опишите когда и при каких условиях проявляется проблема..." rows="4" required style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: var(--text-primary); font-family: inherit; resize: vertical;"></textarea>
+            </div>
+
+            <!-- Статус -->
+            <div class="form-group">
+                <label>Статус</label>
+                <select id="issue-status">
+                    <option value="active">🔴 Не устранено</option>
+                    <option value="resolved">✅ Устранено</option>
+                </select>
+            </div>
+
+            <!-- Стоимость ремонта (если устранено) -->
+            <div class="form-group" id="issue-cost-group" style="display: none;">
+                <label>Стоимость ремонта (₽)</label>
+                <input type="number" id="issue-cost" placeholder="5000" min="0" step="0.01">
+            </div>
+
+            <!-- Решение (если устранено) -->
+            <div class="form-group" id="issue-solution-group" style="display: none;">
+                <label>Как устранили</label>
+                <textarea id="issue-solution" placeholder="Опишите что было сделано..." rows="3" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: var(--text-primary); font-family: inherit; resize: vertical;"></textarea>
+            </div>
+
+            <!-- Кнопки -->
+            <button class="btn-primary" onclick="saveIssue()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                    <polyline points="17 21 17 13 7 13 7 21"/>
+                    <polyline points="7 3 7 8 15 8"/>
+                </svg>
+                Сохранить поломку
+            </button>
+            
+            <button class="btn-secondary" onclick="showScreen('main-screen')" style="margin-top: 12px;">
+                Отмена
+            </button>
+        </div>
+
+        <div class="info-card" style="margin-top: 24px;">
+            <h4>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 8px;">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 16v-4"/>
+                    <path d="M12 8h.01"/>
+                </svg>
+                Совет
+            </h4>
+            <p>Для AI-диагностики используйте команду /diagnostics в боте</p>
+        </div>
+    </div>
+
+    <!-- ЭКРАН: Добавить расход -->
+    <div id="add-expense-screen" class="screen">
+        <div class="header">
+            <button class="btn-back" onclick="showScreen('main-screen')">← Назад</button>
+            <h2>Добавить расход</h2>
+            <p class="subtitle">Учёт затрат на автомобиль</p>
+        </div>
+
+        <div class="calculator-form">
+            <!-- Категория расхода -->
+            <div class="form-group">
+                <label>Категория <span style="color: #ef4444;">*</span></label>
+                <select id="expense-category" required onchange="updateExpenseCategoryHint()">
+                    <option value="">Выберите категорию</option>
+                    <option value="Топливо">⛽ Топливо</option>
+                    <option value="ТО">🔧 Техническое обслуживание</option>
+                    <option value="Ремонт">🛠️ Ремонт</option>
+                    <option value="Страховка">📋 Страховка (ОСАГО/КАСКО)</option>
+                    <option value="Парковка">🅿️ Парковка</option>
+                    <option value="Мойка">💦 Мойка</option>
+                    <option value="Штрафы">🚔 Штрафы</option>
+                    <option value="Шины">🛞 Шины</option>
+                    <option value="Запчасти">⚙️ Запчасти</option>
+                    <option value="Прочее">📦 Прочее</option>
+                </select>
+            </div>
+
+            <!-- Сумма -->
+            <div class="form-group">
+                <label>Сумма (₽) <span style="color: #ef4444;">*</span></label>
+                <input 
+                    type="number" 
+                    id="expense-amount" 
+                    placeholder="1500"
+                    min="0"
+                    step="0.01"
+                    required>
+            </div>
+
+            <!-- Дата -->
+            <div class="form-group">
+                <label>Дата расхода</label>
+                <input 
+                    type="date" 
+                    id="expense-date"
+                    max="2026-12-31">
+            </div>
+
+            <!-- Описание -->
+            <div class="form-group">
+                <label>Описание (необязательно)</label>
+                <textarea 
+                    id="expense-description" 
+                    placeholder="Например: Замена масла Shell Helix, Заправка 40л АИ-95, Оплата парковки..."
+                    rows="3"
+                    style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: var(--text-primary); font-family: inherit; resize: vertical;"></textarea>
+                <small id="expense-hint" style="color: #888; display: block; margin-top: 4px;">Краткое описание расхода</small>
+            </div>
+
+            <!-- Пробег (для топлива) -->
+            <div class="form-group" id="expense-mileage-group" style="display: none;">
+                <label>Пробег на момент заправки (км)</label>
+                <input 
+                    type="number" 
+                    id="expense-mileage" 
+                    placeholder="50000"
+                    min="0">
+                <small style="color: #888;">Для расчёта среднего расхода топлива</small>
+            </div>
+
+            <!-- Кнопки -->
+            <button class="btn-primary" onclick="saveExpense()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="1" x2="12" y2="23"/>
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                </svg>
+                Добавить расход
+            </button>
+            
+            <button class="btn-secondary" onclick="showScreen('main-screen')" style="margin-top: 12px;">
+                Отмена
+            </button>
+        </div>
+
+        <div class="info-card" style="margin-top: 24px;">
+            <h4>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 8px;">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 16v-4"/>
+                    <path d="M12 8h.01"/>
+                </svg>
+                Зачем вести учёт расходов?
+            </h4>
+            <p>Отслеживание затрат помогает понять реальную стоимость владения автомобилем и планировать бюджет на обслуживание.</p>
         </div>
     </div>
 
